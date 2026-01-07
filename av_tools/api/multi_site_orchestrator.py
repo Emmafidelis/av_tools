@@ -1,12 +1,13 @@
 import frappe
 import requests
 from frappe import _
-from urllib.parse import urljoin
+
 
 @frappe.whitelist()
 def disable_user_on_all_sites(email, site_configuration_name):
     """
-    Disable user across all enabled sites in a Site Configuration.
+    Disable user across all enabled sites using standard Frappe REST API.
+    No custom app needed on client sites.
     """
     if not email:
         frappe.throw(_("Email is required"))
@@ -53,7 +54,8 @@ def disable_user_on_all_sites(email, site_configuration_name):
 @frappe.whitelist()
 def enable_user_on_all_sites(email, site_configuration_name):
     """
-    Enable user across all enabled sites in a Site Configuration.
+    Enable user across all enabled sites using standard Frappe REST API.
+    No custom app needed on client sites.
     """
     if not email:
         frappe.throw(_("Email is required"))
@@ -98,35 +100,56 @@ def enable_user_on_all_sites(email, site_configuration_name):
 
 
 def _disable_user_on_site(email, site_name, site_url, api_key, api_secret):
-    """Call remote site API to disable user."""
+    """
+    Disable user using standard Frappe REST API.
+    Client site only needs API key/secret - no app installation.
+    """
     try:
         if not site_url.startswith(("http://", "https://")):
             site_url = f"https://{site_url}"
         
-        endpoint = urljoin(
-            site_url,
-            "/api/method/av_tools.api.user_management.disable_user_account"
-        )
+        site_url = site_url.rstrip("/")
         
-        response = requests.post(
+        # Standard Frappe REST API endpoint
+        endpoint = f"{site_url}/api/resource/User/{email}"
+        
+        response = requests.put(
             endpoint,
             headers={
                 "Authorization": f"token {api_key}:{api_secret}",
                 "Content-Type": "application/json"
             },
-            json={"email": email},
+            json={"enabled": 0},
             timeout=30
         )
         
         if response.status_code == 200:
-            data = response.json()
-            api_result = data.get("message", {})
-            
             return {
                 "site_name": site_name,
                 "site_url": site_url,
-                "status": "success" if api_result.get("success") else "failed",
-                "message": api_result.get("message", "Unknown response")
+                "status": "success",
+                "message": f"User {email} disabled successfully"
+            }
+        elif response.status_code == 404:
+            return {
+                "site_name": site_name,
+                "site_url": site_url,
+                "status": "success",
+                "message": f"User {email} does not exist on this site"
+            }
+        elif response.status_code == 403:
+            return {
+                "site_name": site_name,
+                "site_url": site_url,
+                "status": "error",
+                "message": "Permission denied - check API user permissions"
+            }
+        elif response.status_code == 401:
+            return {
+                "site_name": site_name,
+                "site_url": site_url,
+                "status": "error",
+                "message": "Authentication failed - check API credentials"
             }
         else:
             return {
@@ -164,35 +187,56 @@ def _disable_user_on_site(email, site_name, site_url, api_key, api_secret):
 
 
 def _enable_user_on_site(email, site_name, site_url, api_key, api_secret):
-    """Call remote site API to enable user."""
+    """
+    Enable user using standard Frappe REST API.
+    Client site only needs API key/secret - no app installation.
+    """
     try:
         if not site_url.startswith(("http://", "https://")):
             site_url = f"https://{site_url}"
         
-        endpoint = urljoin(
-            site_url,
-            "/api/method/av_tools.api.user_management.enable_user_account"
-        )
+        site_url = site_url.rstrip("/")
         
-        response = requests.post(
+        # Standard Frappe REST API endpoint
+        endpoint = f"{site_url}/api/resource/User/{email}"
+        
+        response = requests.put(
             endpoint,
             headers={
                 "Authorization": f"token {api_key}:{api_secret}",
                 "Content-Type": "application/json"
             },
-            json={"email": email},
+            json={"enabled": 1},
             timeout=30
         )
         
         if response.status_code == 200:
-            data = response.json()
-            api_result = data.get("message", {})
-            
             return {
                 "site_name": site_name,
                 "site_url": site_url,
-                "status": "success" if api_result.get("success") else "failed",
-                "message": api_result.get("message", "Unknown response")
+                "status": "success",
+                "message": f"User {email} enabled successfully"
+            }
+        elif response.status_code == 404:
+            return {
+                "site_name": site_name,
+                "site_url": site_url,
+                "status": "success",
+                "message": f"User {email} does not exist on this site"
+            }
+        elif response.status_code == 403:
+            return {
+                "site_name": site_name,
+                "site_url": site_url,
+                "status": "error",
+                "message": "Permission denied - check API user permissions"
+            }
+        elif response.status_code == 401:
+            return {
+                "site_name": site_name,
+                "site_url": site_url,
+                "status": "error",
+                "message": "Authentication failed - check API credentials"
             }
         else:
             return {
@@ -216,6 +260,11 @@ def _enable_user_on_site(email, site_name, site_url, api_key, api_secret):
             "status": "error",
             "message": "Connection failed - check URL"
         }
+    except Exception as e:
+        frappe.log_error(
+            title=f"Multi-site user enable error: {site_name}",
+            message=f"Site: {site_url}\nEmail: {email}\nError: {str(e)}"
+        )
         return {
             "site_name": site_name,
             "site_url": site_url,
