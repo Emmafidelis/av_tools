@@ -1,0 +1,165 @@
+{
+  "doctype": "DocType",
+  "name": "User Manager Log",
+  "module": "Av Tools",
+  "custom": 0,
+  "istable": 0,
+  "track_changes": 0,
+  "is_submittable": 0,
+  "engine": "InnoDB",
+  "allow_rename": 0,
+  "autoname": "format:UML-{#####}",
+  "title_field": "email",
+  "field_order": [
+    "email",
+    "action",
+    "site_configuration",
+    "timestamp",
+    "column_break_main",
+    "user",
+    "session_id",
+    "section_results",
+    "total_sites",
+    "successful",
+    "column_break_stats",
+    "failed",
+    "skipped",
+    "section_details",
+    "result_json"
+  ],
+  "fields": [
+    {
+      "fieldname": "email",
+      "label": "User Email",
+      "fieldtype": "Data",
+      "reqd": 1,
+      "in_list_view": 1,
+      "in_standard_filter": 1,
+      "bold": 1,
+      "description": "Email address that was enabled/disabled"
+    },
+    {
+      "fieldname": "action",
+      "label": "Action",
+      "fieldtype": "Select",
+      "options": "Enable\nDisable",
+      "reqd": 1,
+      "in_list_view": 1,
+      "in_standard_filter": 1,
+      "description": "Action performed on user"
+    },
+    {
+      "fieldname": "site_configuration",
+      "label": "Site Configuration",
+      "fieldtype": "Link",
+      "options": "Site Configuration",
+      "reqd": 1,
+      "in_list_view": 1,
+      "description": "Configuration used for this action"
+    },
+    {
+      "fieldname": "timestamp",
+      "label": "Timestamp",
+      "fieldtype": "Datetime",
+      "default": "Now",
+      "reqd": 1,
+      "in_list_view": 1,
+      "description": "When this action was executed"
+    },
+    {
+      "fieldname": "column_break_main",
+      "fieldtype": "Column Break"
+    },
+    {
+      "fieldname": "user",
+      "label": "Executed By",
+      "fieldtype": "Link",
+      "options": "User",
+      "default": "__user",
+      "read_only": 1,
+      "description": "User who executed this action"
+    },
+    {
+      "fieldname": "session_id",
+      "label": "Session ID",
+      "fieldtype": "Data",
+      "read_only": 1,
+      "description": "Unique session identifier"
+    },
+    {
+      "fieldname": "section_results",
+      "label": "Summary",
+      "fieldtype": "Section Break",
+      "collapsible": 0
+    },
+    {
+      "fieldname": "total_sites",
+      "label": "Total Sites",
+      "fieldtype": "Int",
+      "default": "0",
+      "read_only": 1
+    },
+    {
+      "fieldname": "successful",
+      "label": "Successful",
+      "fieldtype": "Int",
+      "default": "0",
+      "read_only": 1
+    },
+    {
+      "fieldname": "column_break_stats",
+      "fieldtype": "Column Break"
+    },
+    {
+      "fieldname": "failed",
+      "label": "Failed",
+      "fieldtype": "Int",
+      "default": "0",
+      "read_only": 1
+    },
+    {
+      "fieldname": "skipped",
+      "label": "Skipped",
+      "fieldtype": "Int",
+      "default": "0",
+      "read_only": 1
+    },
+    {
+      "fieldname": "section_details",
+      "label": "Result Details",
+      "fieldtype": "Section Break",
+      "collapsible": 1,
+      "collapsed": 1
+    },
+    {
+      "fieldname": "result_json",
+      "label": "Full Result JSON",
+      "fieldtype": "Long Text",
+      "read_only": 1,
+      "description": "Complete API response stored as JSON"
+    }
+  ],
+  "permissions": [
+    {
+      "role": "System Manager",
+      "read": 1,
+      "write": 1,
+      "create": 1,
+      "delete": 1,
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "report": 1,
+      "share": 1
+    }
+  ],
+  "sort_field": "timestamp",
+  "sort_order": "DESC",
+  "index_web_pages_for_search": 1,
+  "grid_page_length": 50,
+  "row_format": "Dynamic",
+  "rows_threshold_for_grid_search": 20,
+  "actions": [],
+  "links": [],
+  "states": []
+}
