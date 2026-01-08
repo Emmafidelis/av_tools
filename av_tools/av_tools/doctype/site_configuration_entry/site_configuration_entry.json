@@ -1,0 +1,82 @@
+{
+  "doctype": "DocType",
+  "name": "Site Configuration Entry",
+  "module": "Av Tools",
+  "custom": 0,
+  "istable": 1,
+  "editable_grid": 1,
+  "track_changes": 0,
+  "engine": "InnoDB",
+  "allow_rename": 1,
+  "field_order": [
+    "enabled",
+    "site_name",
+    "site_url",
+    "column_break_auth",
+    "api_key",
+    "api_secret"
+  ],
+  "fields": [
+    {
+      "fieldname": "enabled",
+      "label": "Enabled",
+      "fieldtype": "Check",
+      "default": "1",
+      "in_list_view": 1,
+      "columns": 1,
+      "description": "Uncheck to skip this site during operations"
+    },
+    {
+      "fieldname": "site_name",
+      "label": "Site Name",
+      "fieldtype": "Data",
+      "reqd": 1,
+      "in_list_view": 1,
+      "columns": 2,
+      "bold": 1,
+      "description": "Friendly name e.g. Production India"
+    },
+    {
+      "fieldname": "site_url",
+      "label": "Site URL",
+      "fieldtype": "Data",
+      "reqd": 1,
+      "in_list_view": 1,
+      "columns": 3,
+      "description": "Full URL: https://erp.example.com"
+    },
+    {
+      "fieldname": "column_break_auth",
+      "fieldtype": "Column Break",
+      "label": "Authentication"
+    },
+    {
+      "fieldname": "api_key",
+      "label": "API Key",
+      "fieldtype": "Data",
+      "reqd": 1,
+      "in_list_view": 1,
+      "columns": 2,
+      "description": "API Key from target site"
+    },
+    {
+      "fieldname": "api_secret",
+      "label": "API Secret",
+      "fieldtype": "Password",
+      "reqd": 1,
+      "in_list_view": 0,
+      "description": "API Secret (encrypted storage)"
+    }
+  ],
+  "permissions": [],
+  "quick_entry": 0,
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "index_web_pages_for_search": 1,
+  "grid_page_length": 50,
+  "row_format": "Dynamic",
+  "rows_threshold_for_grid_search": 20,
+  "actions": [],
+  "links": [],
+  "states": []
+}
