@@ -44,8 +44,10 @@
    "default": "Draft",
    "fieldname": "status",
    "fieldtype": "Select",
+   "in_list_view": 1,
    "label": "Status",
-   "options": "Draft\nWeighing\nCompleted\nCancelled"
+   "options": "Draft\nWeighing\nCompleted\nCancelled",
+   "read_only": 1
   },
   {
    "fieldname": "posting_date",
@@ -193,7 +195,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-02-09 17:57:22.124417",
+ "modified": "2026-02-09 18:00:36.944604",
  "modified_by": "Administrator",
  "module": "Weigh Bridge",
  "name": "Weighbridge Ticket",
