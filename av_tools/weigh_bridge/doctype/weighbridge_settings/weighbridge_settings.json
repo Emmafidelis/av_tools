@@ -1,0 +1,150 @@
+{
+ "actions": [],
+ "creation": "2026-02-09 00:00:00.000000",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "section_break_general",
+  "enabled",
+  "protocol",
+  "column_break_general",
+  "unit_of_measure",
+  "timeout_seconds",
+  "section_break_device",
+  "device_ip",
+  "device_port",
+  "column_break_device",
+  "gateway_url",
+  "section_break_nci",
+  "command_read_weight",
+  "weight_stable_code",
+  "section_break_modbus",
+  "modbus_unit_id",
+  "modbus_register",
+  "modbus_register_count"
+ ],
+ "fields": [
+  {
+   "fieldname": "section_break_general",
+   "fieldtype": "Section Break",
+   "label": "General"
+  },
+  {
+   "default": "1",
+   "fieldname": "enabled",
+   "fieldtype": "Check",
+   "label": "Enabled"
+  },
+  {
+   "fieldname": "protocol",
+   "fieldtype": "Select",
+   "label": "Protocol",
+   "options": "Avery/NCI (SCP)\nModbus TCP",
+   "reqd": 1
+  },
+  {
+   "fieldname": "column_break_general",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "t",
+   "fieldname": "unit_of_measure",
+   "fieldtype": "Select",
+   "label": "Weight UOM",
+   "options": "kg\nt"
+  },
+  {
+   "default": "5",
+   "fieldname": "timeout_seconds",
+   "fieldtype": "Int",
+   "label": "Timeout (Seconds)"
+  },
+  {
+   "fieldname": "section_break_device",
+   "fieldtype": "Section Break",
+   "label": "Device"
+  },
+  {
+   "fieldname": "device_ip",
+   "fieldtype": "Data",
+   "label": "Device IP"
+  },
+  {
+   "fieldname": "device_port",
+   "fieldtype": "Int",
+   "label": "Device Port"
+  },
+  {
+   "fieldname": "column_break_device",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "gateway_url",
+   "fieldtype": "Data",
+   "label": "Gateway URL"
+  },
+  {
+   "fieldname": "section_break_nci",
+   "fieldtype": "Section Break",
+   "label": "Avery/NCI (SCP)"
+  },
+  {
+   "default": "RW",
+   "fieldname": "command_read_weight",
+   "fieldtype": "Data",
+   "label": "Read Weight Command"
+  },
+  {
+   "fieldname": "weight_stable_code",
+   "fieldtype": "Data",
+   "label": "Stable Code"
+  },
+  {
+   "fieldname": "section_break_modbus",
+   "fieldtype": "Section Break",
+   "label": "Modbus TCP"
+  },
+  {
+   "default": "1",
+   "fieldname": "modbus_unit_id",
+   "fieldtype": "Int",
+   "label": "Unit ID"
+  },
+  {
+   "fieldname": "modbus_register",
+   "fieldtype": "Int",
+   "label": "Register"
+  },
+  {
+   "default": "2",
+   "fieldname": "modbus_register_count",
+   "fieldtype": "Int",
+   "label": "Register Count"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "issingle": 1,
+ "links": [],
+ "modified": "2026-02-09 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Weigh Bridge",
+ "name": "Weighbridge Settings",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "track_changes": 1
+}
