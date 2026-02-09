@@ -3,10 +3,8 @@
 Small HTTP service that reads weight from the weighbridge indicator over TCP and exposes it to Frappe.
 
 ## Files
-- `run_weighbridge_service.py` [Download](./run_weighbridge_service.py?raw=1)
-- `requirements.txt` [Download](./requirements.txt?raw=1)
-
-If your browser still opens the file, use **Save As** or right‑click and choose **Save link as**.
+- [**Download run_weighbridge_service.py**](https://github.com/Aakvatech-Limited/av_tools/raw/main/av_tools/weigh_bridge/service/run_weighbridge_service.py)
+- [**Download requirements.txt**](https://github.com/Aakvatech-Limited/av_tools/raw/main/av_tools/weigh_bridge/service/requirements.txt)
 
 ## Install (Windows / Linux)
 From this folder:
