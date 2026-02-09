@@ -1,0 +1,37 @@
+import frappe
+import requests
+
+
+def _get_settings():
+    settings = frappe.get_single("Weighbridge Settings")
+    if not settings.enabled:
+        frappe.throw("Weighbridge Settings is disabled.")
+    if not settings.gateway_url:
+        frappe.throw("Gateway URL is required in Weighbridge Settings.")
+    return settings
+
+
+@frappe.whitelist()
+def read_weight(mode=None):
+    settings = _get_settings()
+    payload = {
+        "device_ip": settings.device_ip,
+        "device_port": settings.device_port,
+        "command": settings.command_read_weight,
+        "timeout": settings.timeout_seconds,
+    }
+
+    url = settings.gateway_url.rstrip("/") + "/read_weight"
+    try:
+        response = requests.post(url, json=payload, timeout=settings.timeout_seconds or 5)
+        response.raise_for_status()
+    except requests.RequestException as exc:
+        frappe.throw(f"Failed to read weight: {exc}")
+
+    data = response.json()
+    return {
+        "weight": data.get("weight"),
+        "uom": data.get("uom"),
+        "raw": data.get("raw"),
+        "mode": mode,
+    }
