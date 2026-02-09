@@ -1,0 +1,315 @@
+{
+ "actions": [],
+ "autoname": "naming_series:",
+ "creation": "2026-02-09 00:00:00",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "naming_series",
+  "status",
+  "posting_date",
+  "posting_time",
+  "column_break_reference",
+  "document_type",
+  "document_reference",
+  "customer",
+  "customer_name",
+  "company",
+  "section_break_vehicle",
+  "vehicle",
+  "vehicle_owner",
+  "vehicle_type",
+  "driver_name",
+  "driver_phone",
+  "weighbridge_name",
+  "external_ticket_no",
+  "section_break_weights",
+  "auto_tare",
+  "tare_manual",
+  "tare_weight",
+  "tare_time",
+  "column_break_weights",
+  "auto_gross",
+  "gross_manual",
+  "gross_weight",
+  "gross_time",
+  "net_weight",
+  "weight_uom",
+  "weight_reading_source",
+  "section_break_items",
+  "items",
+  "section_break_accounting",
+  "payment_type",
+  "reference_number",
+  "vat_exemption",
+  "amount_excl_vat",
+  "vat_amount",
+  "total_incl_vat",
+  "section_break_remarks",
+  "remarks"
+ ],
+ "fields": [
+  {
+   "default": "WBT-.YYYY.-.#####",
+   "fieldname": "naming_series",
+   "fieldtype": "Select",
+   "label": "Naming Series",
+   "options": "WBT-.YYYY.-.#####"
+  },
+  {
+   "default": "Draft",
+   "fieldname": "status",
+   "fieldtype": "Select",
+   "label": "Status",
+   "options": "Draft\nWeighing\nCompleted\nCancelled"
+  },
+  {
+   "fieldname": "posting_date",
+   "fieldtype": "Date",
+   "label": "Posting Date"
+  },
+  {
+   "fieldname": "posting_time",
+   "fieldtype": "Time",
+   "label": "Posting Time"
+  },
+  {
+   "fieldname": "column_break_reference",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "document_type",
+   "fieldtype": "Select",
+   "in_list_view": 1,
+   "label": "Document Type",
+   "options": "Sales Invoice\nDelivery Note",
+   "reqd": 1
+  },
+  {
+   "fieldname": "document_reference",
+   "fieldtype": "Dynamic Link",
+   "in_list_view": 1,
+   "label": "Document Reference",
+   "options": "document_type",
+   "reqd": 1
+  },
+  {
+   "fieldname": "customer",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Customer",
+   "options": "Customer",
+   "reqd": 1
+  },
+  {
+   "fieldname": "customer_name",
+   "fieldtype": "Data",
+   "label": "Customer Name",
+   "read_only": 1
+  },
+  {
+   "fieldname": "company",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Company",
+   "options": "Company",
+   "reqd": 1
+  },
+  {
+   "fieldname": "section_break_vehicle",
+   "fieldtype": "Section Break",
+   "label": "Vehicle"
+  },
+  {
+   "fieldname": "vehicle",
+   "fieldtype": "Link",
+   "label": "Vehicle",
+   "options": "Vehicle"
+  },
+  {
+   "fieldname": "vehicle_owner",
+   "fieldtype": "Data",
+   "label": "Vehicle Owner"
+  },
+  {
+   "fieldname": "vehicle_type",
+   "fieldtype": "Data",
+   "label": "Vehicle Type"
+  },
+  {
+   "fieldname": "driver_name",
+   "fieldtype": "Data",
+   "label": "Driver Name"
+  },
+  {
+   "fieldname": "driver_phone",
+   "fieldtype": "Data",
+   "label": "Driver Phone"
+  },
+  {
+   "fieldname": "weighbridge_name",
+   "fieldtype": "Data",
+   "label": "Weighbridge Name"
+  },
+  {
+   "fieldname": "external_ticket_no",
+   "fieldtype": "Data",
+   "label": "External Ticket No"
+  },
+  {
+   "fieldname": "section_break_weights",
+   "fieldtype": "Section Break",
+   "label": "Weights"
+  },
+  {
+   "default": "0",
+   "fieldname": "auto_tare",
+   "fieldtype": "Check",
+   "label": "Auto Tare"
+  },
+  {
+   "default": "0",
+   "fieldname": "tare_manual",
+   "fieldtype": "Check",
+   "label": "Tare Manual"
+  },
+  {
+   "fieldname": "tare_weight",
+   "fieldtype": "Float",
+   "label": "Tare Weight"
+  },
+  {
+   "fieldname": "tare_time",
+   "fieldtype": "Datetime",
+   "label": "Tare Time"
+  },
+  {
+   "fieldname": "column_break_weights",
+   "fieldtype": "Column Break"
+  },
+  {
+   "default": "0",
+   "fieldname": "auto_gross",
+   "fieldtype": "Check",
+   "label": "Auto Gross"
+  },
+  {
+   "default": "0",
+   "fieldname": "gross_manual",
+   "fieldtype": "Check",
+   "label": "Gross Manual"
+  },
+  {
+   "fieldname": "gross_weight",
+   "fieldtype": "Float",
+   "label": "Gross Weight"
+  },
+  {
+   "fieldname": "gross_time",
+   "fieldtype": "Datetime",
+   "label": "Gross Time"
+  },
+  {
+   "fieldname": "net_weight",
+   "fieldtype": "Float",
+   "label": "Net Weight",
+   "read_only": 1
+  },
+  {
+   "fieldname": "weight_uom",
+   "fieldtype": "Select",
+   "label": "Weight UOM",
+   "options": "kg\nt"
+  },
+  {
+   "fieldname": "weight_reading_source",
+   "fieldtype": "Data",
+   "label": "Weight Reading Source"
+  },
+  {
+   "fieldname": "section_break_items",
+   "fieldtype": "Section Break",
+   "label": "Items"
+  },
+  {
+   "fieldname": "items",
+   "fieldtype": "Table",
+   "label": "Items",
+   "options": "Weighbridge Ticket Item"
+  },
+  {
+   "fieldname": "section_break_accounting",
+   "fieldtype": "Section Break",
+   "label": "Accounting"
+  },
+  {
+   "fieldname": "payment_type",
+   "fieldtype": "Link",
+   "label": "Payment Type",
+   "options": "Mode of Payment"
+  },
+  {
+   "fieldname": "reference_number",
+   "fieldtype": "Data",
+   "label": "Reference Number"
+  },
+  {
+   "default": "0",
+   "fieldname": "vat_exemption",
+   "fieldtype": "Check",
+   "label": "VAT Exemption"
+  },
+  {
+   "fieldname": "amount_excl_vat",
+   "fieldtype": "Currency",
+   "label": "Amount (Excl. VAT)"
+  },
+  {
+   "fieldname": "vat_amount",
+   "fieldtype": "Currency",
+   "label": "VAT Amount"
+  },
+  {
+   "fieldname": "total_incl_vat",
+   "fieldtype": "Currency",
+   "label": "Total (Incl. VAT)"
+  },
+  {
+   "fieldname": "section_break_remarks",
+   "fieldtype": "Section Break",
+   "label": "Remarks"
+  },
+  {
+   "fieldname": "remarks",
+   "fieldtype": "Small Text",
+   "label": "Remarks"
+  }
+ ],
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2026-02-09 12:59:43.275592",
+ "modified_by": "Administrator",
+ "module": "Weigh Bridge",
+ "name": "Weighbridge Ticket",
+ "naming_rule": "Expression",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": [],
+ "track_changes": 1
+}
