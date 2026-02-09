@@ -4,6 +4,7 @@ import socket
 from typing import Optional
 
 from fastapi import FastAPI, HTTPException
+from pydantic import BaseModel
 
 
 APP = FastAPI(title="Weighbridge Service", version="0.1.0")
@@ -15,6 +16,14 @@ DEFAULT_COMMAND = os.getenv("WEIGHBRIDGE_READ_COMMAND", "RW\r\n")
 
 
 FLOAT_PATTERN = re.compile(r"[-+]?\d*\.?\d+")
+
+
+class ReadWeightRequest(BaseModel):
+    device_ip: Optional[str] = None
+    device_port: Optional[int] = None
+    command: Optional[str] = None
+    timeout: Optional[float] = None
+    mock: Optional[int] = 0
 
 
 def _read_weight_from_device(
@@ -42,18 +51,12 @@ def _extract_weight(payload: str) -> float:
     return float(match.group(0))
 
 
-@APP.get("/health")
-def health():
-    return {"status": "ok"}
-
-
-@APP.get("/read_weight")
-def read_weight(
-    device_ip: Optional[str] = None,
-    device_port: Optional[int] = None,
-    command: Optional[str] = None,
-    timeout: Optional[float] = None,
-    mock: Optional[int] = 0,
+def _handle_read_weight(
+    device_ip: Optional[str],
+    device_port: Optional[int],
+    command: Optional[str],
+    timeout: Optional[float],
+    mock: Optional[int],
 ):
     if mock:
         return {"weight": 0.0, "uom": "t", "raw": "MOCK"}
@@ -70,6 +73,33 @@ def read_weight(
         raise HTTPException(status_code=500, detail=str(exc))
 
     return {"weight": weight, "uom": "t", "raw": raw}
+
+
+@APP.get("/health")
+def health():
+    return {"status": "ok"}
+
+
+@APP.get("/read_weight")
+def read_weight(
+    device_ip: Optional[str] = None,
+    device_port: Optional[int] = None,
+    command: Optional[str] = None,
+    timeout: Optional[float] = None,
+    mock: Optional[int] = 0,
+):
+    return _handle_read_weight(device_ip, device_port, command, timeout, mock)
+
+
+@APP.post("/read_weight")
+def read_weight_post(payload: ReadWeightRequest):
+    return _handle_read_weight(
+        payload.device_ip,
+        payload.device_port,
+        payload.command,
+        payload.timeout,
+        payload.mock,
+    )
 
 
 if __name__ == "__main__":

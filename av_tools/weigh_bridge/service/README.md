@@ -26,26 +26,8 @@ pip install -r requirements.txt
 ```
 
 ## Configure
-Set environment variables (optional):
-- `WEIGHBRIDGE_DEVICE_IP` (e.g. `192.168.1.50`)
-- `WEIGHBRIDGE_DEVICE_PORT` (e.g. `10001`)
-- `WEIGHBRIDGE_READ_COMMAND` (default `RW\r\n`)
-- `WEIGHBRIDGE_TIMEOUT` (default `5` seconds)
-- `PORT` (default `8000`)
-
-Example (Windows PowerShell):
-```powershell
-$env:WEIGHBRIDGE_DEVICE_IP="192.168.1.50"
-$env:WEIGHBRIDGE_DEVICE_PORT="10001"
-$env:WEIGHBRIDGE_READ_COMMAND="RW`r`n"
-```
-
-Example (Linux/macOS):
-```bash
-export WEIGHBRIDGE_DEVICE_IP=192.168.1.50
-export WEIGHBRIDGE_DEVICE_PORT=10001
-export WEIGHBRIDGE_READ_COMMAND=$'RW\r\n'
-```
+Use the **Weighbridge Settings** DocType in Frappe and pass settings to the service via `POST /read_weight`.
+You only need to set the service `PORT` if you want a custom port (default is `8000`).
 
 ## Run
 ```bash
@@ -54,12 +36,20 @@ python run_weighbridge_service.py
 
 Service URLs:
 - `GET /health`
-- `GET /read_weight`
+- `GET /read_weight` (query params)
+- `POST /read_weight` (JSON body)
 
 Test:
 ```bash
 curl http://localhost:8000/health
 curl "http://localhost:8000/read_weight?mock=1"
+```
+
+POST example:
+```bash
+curl -X POST http://localhost:8000/read_weight \
+  -H "Content-Type: application/json" \
+  -d '{"device_ip":"192.168.1.50","device_port":10001,"command":"RW\r\n","timeout":5}'
 ```
 
 If `/health` works but `/read_weight` fails, the service is running and the issue is the scale connection or protocol.
