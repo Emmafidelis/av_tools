@@ -9,12 +9,9 @@
  "field_order": [
   "item_code",
   "item_name",
+  "column_break_xlxw",
   "qty",
-  "uom",
-  "rate",
-  "amount",
-  "net_weight",
-  "remarks"
+  "uom"
  ],
  "fields": [
   {
@@ -46,31 +43,13 @@
    "options": "UOM"
   },
   {
-   "fieldname": "rate",
-   "fieldtype": "Currency",
-   "label": "Rate"
-  },
-  {
-   "fieldname": "amount",
-   "fieldtype": "Currency",
-   "label": "Amount",
-   "read_only": 1
-  },
-  {
-   "fieldname": "net_weight",
-   "fieldtype": "Float",
-   "in_list_view": 1,
-   "label": "Net Weight"
-  },
-  {
-   "fieldname": "remarks",
-   "fieldtype": "Small Text",
-   "label": "Remarks"
+   "fieldname": "column_break_xlxw",
+   "fieldtype": "Column Break"
   }
  ],
  "istable": 1,
  "links": [],
- "modified": "2026-02-09 12:59:58.395665",
+ "modified": "2026-02-09 15:30:06.554611",
  "modified_by": "Administrator",
  "module": "Weigh Bridge",
  "name": "Weighbridge Ticket Item",
