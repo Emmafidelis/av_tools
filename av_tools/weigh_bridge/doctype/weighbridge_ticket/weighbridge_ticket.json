@@ -18,16 +18,16 @@
   "vehicle",
   "section_break_weights",
   "tare_weight",
-  "read_tare",
   "tare_manual",
-  "tare_time",
+  "read_tare",
   "column_break_weights",
   "gross_weight",
-  "read_gross",
   "gross_manual",
-  "gross_time",
+  "read_gross",
   "column_break_tgrw",
   "net_weight",
+  "tare_time",
+  "gross_time",
   "section_break_items",
   "items",
   "amended_from"
@@ -113,12 +113,14 @@
   {
    "fieldname": "tare_weight",
    "fieldtype": "Float",
-   "label": "Tare Weight"
+   "label": "Tare Weight",
+   "read_only_depends_on": "eval: !doc.tare_manual"
   },
   {
    "fieldname": "tare_time",
    "fieldtype": "Datetime",
-   "label": "Tare Time"
+   "label": "Tare Time",
+   "read_only": 1
   },
   {
    "fieldname": "column_break_weights",
@@ -133,12 +135,14 @@
   {
    "fieldname": "gross_weight",
    "fieldtype": "Float",
-   "label": "Gross Weight"
+   "label": "Gross Weight",
+   "read_only_depends_on": "eval: !doc.gross_manual"
   },
   {
    "fieldname": "gross_time",
    "fieldtype": "Datetime",
-   "label": "Gross Time"
+   "label": "Gross Time",
+   "read_only": 1
   },
   {
    "fieldname": "net_weight",
@@ -189,7 +193,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-02-09 15:28:50.296395",
+ "modified": "2026-02-09 17:57:22.124417",
  "modified_by": "Administrator",
  "module": "Weigh Bridge",
  "name": "Weighbridge Ticket",
