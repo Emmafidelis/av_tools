@@ -4,10 +4,24 @@ import socket
 from typing import Optional
 
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 
 APP = FastAPI(title="Weighbridge Service", version="0.1.0")
+
+allowed_origins = [
+    origin.strip()
+    for origin in os.getenv("WEIGHBRIDGE_ALLOWED_ORIGINS", "*").split(",")
+    if origin.strip()
+]
+
+APP.add_middleware(
+    CORSMiddleware,
+    allow_origins=allowed_origins or ["*"],
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 DEFAULT_DEVICE_IP = os.getenv("WEIGHBRIDGE_DEVICE_IP", "")
 DEFAULT_DEVICE_PORT = int(os.getenv("WEIGHBRIDGE_DEVICE_PORT", "0") or 0)

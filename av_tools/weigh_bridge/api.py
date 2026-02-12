@@ -35,3 +35,17 @@ def read_weight(mode=None):
         "raw": data.get("raw"),
         "mode": mode,
     }
+
+
+@frappe.whitelist()
+def get_gateway_payload():
+    settings = _get_settings()
+    return {
+        "gateway_url": settings.gateway_url,
+        "payload": {
+            "device_ip": settings.device_ip,
+            "device_port": settings.device_port,
+            "command": settings.command_read_weight,
+            "timeout": settings.timeout_seconds,
+        },
+    }
