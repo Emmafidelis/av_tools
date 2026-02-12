@@ -39,15 +39,29 @@ const read_weight_client = (frm, target_field, time_field) => {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(frm._gateway_payload || {}),
     })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`Gateway error: ${response.status}`);
+      .then((response) =>
+        response.text().then((text) => ({
+          ok: response.ok,
+          status: response.status,
+          text,
+        }))
+      )
+      .then((result) => {
+        if (!result.ok) {
+          frappe.msgprint(result.text || `HTTP ${result.status}`);
+          return;
         }
-        return response.json();
-      })
-      .then((data) => {
-        if (!data || data.weight == null) {
-          frappe.msgprint(__("No weight received from the gateway."));
+
+        let data = {};
+        try {
+          data = JSON.parse(result.text || "{}");
+        } catch (err) {
+          frappe.msgprint(result.text || "Invalid JSON response.");
+          return;
+        }
+
+        if (data.weight == null) {
+          frappe.msgprint(result.text || "Missing weight in response.");
           return;
         }
         frm.set_value(target_field, data.weight);
@@ -55,12 +69,7 @@ const read_weight_client = (frm, target_field, time_field) => {
         set_net_weight(frm);
       })
       .catch((error) => {
-        frappe.msgprint(
-          __(
-            "Failed to read weight. If this is a HTTPS site, the gateway must be HTTPS or tunneled."
-          )
-        );
-        // Log error for debugging without breaking UI.
+        frappe.msgprint(error.message);
         // eslint-disable-next-line no-console
         console.error(error);
       });
