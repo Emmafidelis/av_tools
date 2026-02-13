@@ -43,6 +43,12 @@ def get_gateway_payload():
     return {
         "gateway_url": settings.gateway_url,
         "payload": {
+            "connection_type": settings.connection_type,
+            "serial_port": settings.serial_port,
+            "baud_rate": settings.baud_rate,
+            "parity": settings.parity,
+            "data_bits": settings.data_bits,
+            "stop_bits": settings.stop_bits,
             "device_ip": settings.device_ip,
             "device_port": settings.device_port,
             "command": settings.command_read_weight,

@@ -6,11 +6,17 @@
  "field_order": [
   "section_break_general",
   "enabled",
+  "connection_type",
   "protocol",
   "column_break_general",
   "unit_of_measure",
   "timeout_seconds",
   "section_break_device",
+  "serial_port",
+  "baud_rate",
+  "parity",
+  "data_bits",
+  "stop_bits",
   "device_ip",
   "device_port",
   "column_break_device",
@@ -34,6 +40,14 @@
    "fieldname": "enabled",
    "fieldtype": "Check",
    "label": "Enabled"
+  },
+  {
+   "default": "Serial",
+   "fieldname": "connection_type",
+   "fieldtype": "Select",
+   "label": "Connection Type",
+   "options": "Serial\nTCP",
+   "reqd": 1
   },
   {
    "fieldname": "protocol",
@@ -65,11 +79,50 @@
    "label": "Device"
   },
   {
+   "depends_on": "eval:doc.connection_type=='Serial'",
+   "fieldname": "serial_port",
+   "fieldtype": "Data",
+   "label": "Serial Port"
+  },
+  {
+   "default": "9600",
+   "depends_on": "eval:doc.connection_type=='Serial'",
+   "fieldname": "baud_rate",
+   "fieldtype": "Int",
+   "label": "Baud Rate"
+  },
+  {
+   "default": "None",
+   "depends_on": "eval:doc.connection_type=='Serial'",
+   "fieldname": "parity",
+   "fieldtype": "Select",
+   "label": "Parity",
+   "options": "None\nEven\nOdd"
+  },
+  {
+   "default": "8",
+   "depends_on": "eval:doc.connection_type=='Serial'",
+   "fieldname": "data_bits",
+   "fieldtype": "Select",
+   "label": "Data Bits",
+   "options": "7\n8"
+  },
+  {
+   "default": "1",
+   "depends_on": "eval:doc.connection_type=='Serial'",
+   "fieldname": "stop_bits",
+   "fieldtype": "Select",
+   "label": "Stop Bits",
+   "options": "1\n2"
+  },
+  {
+   "depends_on": "eval:doc.connection_type=='TCP'",
    "fieldname": "device_ip",
    "fieldtype": "Data",
    "label": "Device IP"
   },
   {
+   "depends_on": "eval:doc.connection_type=='TCP'",
    "fieldname": "device_port",
    "fieldtype": "Int",
    "label": "Device Port"
