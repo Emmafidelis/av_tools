@@ -6,6 +6,7 @@ from typing import Optional
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+import codecs
 import serial
 
 
@@ -56,10 +57,12 @@ def _read_weight_from_device(
     if not device_ip or not device_port:
         raise ValueError("Device IP/port not configured")
 
+    payload = _command_to_bytes(command)
+
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as client:
         client.settimeout(timeout)
         client.connect((device_ip, device_port))
-        client.sendall(command.encode("ascii", errors="ignore"))
+        client.sendall(payload)
         data = client.recv(1024)
 
     return data.decode("ascii", errors="ignore").strip()
@@ -95,6 +98,8 @@ def _read_weight_from_serial(
     stop_bits_value = stop_bits_map.get(stop_bits or 1, serial.STOPBITS_ONE)
     data_bits_value = data_bits_map.get(data_bits or 8, serial.EIGHTBITS)
 
+    payload = _command_to_bytes(command)
+
     with serial.Serial(
         port=serial_port,
         baudrate=baud_rate or 9600,
@@ -104,7 +109,7 @@ def _read_weight_from_serial(
         timeout=timeout,
     ) as ser:
         ser.reset_input_buffer()
-        ser.write(command.encode("ascii", errors="ignore"))
+        ser.write(payload)
         data = ser.readline()
         if not data:
             data = ser.read(1024)
@@ -117,6 +122,18 @@ def _extract_weight(payload: str) -> float:
     if not match:
         raise ValueError("No numeric weight found in response")
     return float(match.group(0))
+
+
+def _command_to_bytes(command: str) -> bytes:
+    if not command:
+        return b""
+    try:
+        decoded = codecs.decode(command.encode("utf-8"), "unicode_escape")
+        if isinstance(decoded, str):
+            return decoded.encode("latin1", errors="ignore")
+        return decoded
+    except Exception:
+        return command.encode("ascii", errors="ignore")
 
 
 def _handle_read_weight(

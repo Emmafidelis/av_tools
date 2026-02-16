@@ -6,28 +6,14 @@
  "field_order": [
   "section_break_general",
   "enabled",
-  "connection_type",
-  "protocol",
-  "column_break_general",
   "unit_of_measure",
   "timeout_seconds",
+  "gateway_url",
   "section_break_device",
-  "serial_port",
-  "baud_rate",
-  "parity",
-  "data_bits",
-  "stop_bits",
   "device_ip",
   "device_port",
-  "column_break_device",
-  "gateway_url",
   "section_break_nci",
-  "command_read_weight",
-  "weight_stable_code",
-  "section_break_modbus",
-  "modbus_unit_id",
-  "modbus_register",
-  "modbus_register_count"
+  "command_read_weight"
  ],
  "fields": [
   {
@@ -40,25 +26,6 @@
    "fieldname": "enabled",
    "fieldtype": "Check",
    "label": "Enabled"
-  },
-  {
-   "default": "Serial",
-   "fieldname": "connection_type",
-   "fieldtype": "Select",
-   "label": "Connection Type",
-   "options": "Serial\nTCP",
-   "reqd": 1
-  },
-  {
-   "fieldname": "protocol",
-   "fieldtype": "Select",
-   "label": "Protocol",
-   "options": "Avery/NCI (SCP)\nModbus TCP",
-   "reqd": 1
-  },
-  {
-   "fieldname": "column_break_general",
-   "fieldtype": "Column Break"
   },
   {
    "default": "t",
@@ -74,67 +41,24 @@
    "label": "Timeout (Seconds)"
   },
   {
+   "fieldname": "gateway_url",
+   "fieldtype": "Data",
+   "label": "Gateway URL"
+  },
+  {
    "fieldname": "section_break_device",
    "fieldtype": "Section Break",
    "label": "Device"
   },
   {
-   "depends_on": "eval:doc.connection_type=='Serial'",
-   "fieldname": "serial_port",
-   "fieldtype": "Data",
-   "label": "Serial Port"
-  },
-  {
-   "default": "9600",
-   "depends_on": "eval:doc.connection_type=='Serial'",
-   "fieldname": "baud_rate",
-   "fieldtype": "Int",
-   "label": "Baud Rate"
-  },
-  {
-   "default": "None",
-   "depends_on": "eval:doc.connection_type=='Serial'",
-   "fieldname": "parity",
-   "fieldtype": "Select",
-   "label": "Parity",
-   "options": "None\nEven\nOdd"
-  },
-  {
-   "default": "8",
-   "depends_on": "eval:doc.connection_type=='Serial'",
-   "fieldname": "data_bits",
-   "fieldtype": "Select",
-   "label": "Data Bits",
-   "options": "7\n8"
-  },
-  {
-   "default": "1",
-   "depends_on": "eval:doc.connection_type=='Serial'",
-   "fieldname": "stop_bits",
-   "fieldtype": "Select",
-   "label": "Stop Bits",
-   "options": "1\n2"
-  },
-  {
-   "depends_on": "eval:doc.connection_type=='TCP'",
    "fieldname": "device_ip",
    "fieldtype": "Data",
    "label": "Device IP"
   },
   {
-   "depends_on": "eval:doc.connection_type=='TCP'",
    "fieldname": "device_port",
    "fieldtype": "Int",
    "label": "Device Port"
-  },
-  {
-   "fieldname": "column_break_device",
-   "fieldtype": "Column Break"
-  },
-  {
-   "fieldname": "gateway_url",
-   "fieldtype": "Data",
-   "label": "Gateway URL"
   },
   {
    "fieldname": "section_break_nci",
@@ -146,33 +70,6 @@
    "fieldname": "command_read_weight",
    "fieldtype": "Data",
    "label": "Read Weight Command"
-  },
-  {
-   "fieldname": "weight_stable_code",
-   "fieldtype": "Data",
-   "label": "Stable Code"
-  },
-  {
-   "fieldname": "section_break_modbus",
-   "fieldtype": "Section Break",
-   "label": "Modbus TCP"
-  },
-  {
-   "default": "1",
-   "fieldname": "modbus_unit_id",
-   "fieldtype": "Int",
-   "label": "Unit ID"
-  },
-  {
-   "fieldname": "modbus_register",
-   "fieldtype": "Int",
-   "label": "Register"
-  },
-  {
-   "default": "2",
-   "fieldname": "modbus_register_count",
-   "fieldtype": "Int",
-   "label": "Register Count"
   }
  ],
  "index_web_pages_for_search": 1,
