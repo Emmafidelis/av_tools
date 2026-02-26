@@ -179,11 +179,13 @@
    "fieldtype": "Column Break"
   },
   {
+   "depends_on": "eval: doc.docstatus == 1",
    "fieldname": "read_tare",
    "fieldtype": "Button",
    "label": "Read Tare"
   },
   {
+   "depends_on": "eval: doc.docstatus == 1",
    "fieldname": "read_gross",
    "fieldtype": "Button",
    "label": "Read Gross"
