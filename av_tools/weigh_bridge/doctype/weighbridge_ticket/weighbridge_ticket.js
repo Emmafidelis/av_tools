@@ -45,7 +45,8 @@ const ensure_gateway_payload = (frm, callback) => {
       }
       frm._gateway_url = (r.message.gateway_url || "").replace(/\/+$/, "");
       frm._gateway_payload = r.message.payload || {};
-      frm._read_weight_url = (r.message.payload || {}).read_url || "";
+      frm._read_weight_url =
+        (r.message.payload || {}).read_url || r.message.read_weight_url || "";
       callback();
     },
   });
