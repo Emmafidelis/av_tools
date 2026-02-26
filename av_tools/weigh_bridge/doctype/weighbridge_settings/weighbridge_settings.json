@@ -9,6 +9,7 @@
   "unit_of_measure",
   "timeout_seconds",
   "gateway_url",
+  "read_weight_url",
   "section_break_device",
   "device_ip",
   "device_port",
@@ -44,6 +45,11 @@
    "fieldname": "gateway_url",
    "fieldtype": "Data",
    "label": "Gateway URL"
+  },
+  {
+   "fieldname": "read_weight_url",
+   "fieldtype": "Data",
+   "label": "Read Weight URL"
   },
   {
    "fieldname": "section_break_device",
