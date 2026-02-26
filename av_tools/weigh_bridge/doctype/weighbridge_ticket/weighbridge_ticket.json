@@ -53,12 +53,16 @@
   {
    "fieldname": "posting_date",
    "fieldtype": "Date",
-   "label": "Posting Date"
+   "label": "Posting Date",
+   "default": "Today",
+   "read_only": 1
   },
   {
    "fieldname": "posting_time",
    "fieldtype": "Time",
-   "label": "Posting Time"
+   "label": "Posting Time",
+   "default": "Now",
+   "read_only": 1
   },
   {
    "fieldname": "column_break_reference",
