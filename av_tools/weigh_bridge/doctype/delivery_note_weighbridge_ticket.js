@@ -43,17 +43,17 @@ const handle_ticket_change = (frm) => {
   }
 
   frappe.call({
-    method: "frappe.client.get",
+    method: "av_tools.weigh_bridge.api.get_ticket_items",
     args: {
-      doctype: "Weighbridge Ticket",
-      name: frm.doc.weighbridge_ticket,
+      ticket: frm.doc.weighbridge_ticket,
+      doctype: frm.doctype,
     },
     callback: (r) => {
       if (!r.message) {
         frappe.msgprint(__("Unable to load Weighbridge Ticket."));
         return;
       }
-      apply_ticket_items(frm, r.message);
+      apply_ticket_items(frm, { items: r.message.items || [] });
     },
   });
 };
@@ -62,5 +62,10 @@ frappe.ui.form.on("Delivery Note", {
   onload(frm) {
     set_weighbridge_query(frm);
   },
-
+  refresh(frm) {
+    set_weighbridge_query(frm);
+  },
+  weighbridge_ticket(frm) {
+    handle_ticket_change(frm);
+  },
 });

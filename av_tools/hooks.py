@@ -152,6 +152,13 @@ after_migrate = "av_tools.weigh_bridge.custom_fields.setup_custom_fields"
 # 		"on_trash": "method"
 # 	}
 # }
+doc_events = {
+	"Sales Invoice": {"validate": "av_tools.weigh_bridge.validation.validate_weighbridge_ticket"},
+	"Delivery Note": {"validate": "av_tools.weigh_bridge.validation.validate_weighbridge_ticket"},
+	"Sales Order": {"validate": "av_tools.weigh_bridge.validation.validate_weighbridge_ticket"},
+	"Purchase Invoice": {"validate": "av_tools.weigh_bridge.validation.validate_weighbridge_ticket"},
+	"Purchase Receipt": {"validate": "av_tools.weigh_bridge.validation.validate_weighbridge_ticket"},
+}
 
 # Scheduled Tasks
 # ---------------

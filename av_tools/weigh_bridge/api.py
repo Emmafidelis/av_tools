@@ -53,3 +53,31 @@ def get_gateway_payload():
             "read_url": settings.read_weight_url,
         },
     }
+
+
+@frappe.whitelist()
+def get_ticket_items(ticket, doctype=None):
+    if not ticket:
+        frappe.throw("Weighbridge Ticket is required.")
+
+    doc = frappe.get_doc("Weighbridge Ticket", ticket)
+    if doc.docstatus != 1:
+        frappe.throw("Weighbridge Ticket must be submitted.")
+
+    if doctype and doc.document_type and doc.document_type != doctype:
+        frappe.throw("Weighbridge Ticket document type does not match.")
+
+    items = [
+        {
+            "item_code": row.item_code,
+            "qty": row.qty,
+            "uom": row.uom,
+        }
+        for row in (doc.items or [])
+    ]
+
+    return {
+        "items": items,
+        "document_type": doc.document_type,
+        "document_reference": doc.document_reference,
+    }
