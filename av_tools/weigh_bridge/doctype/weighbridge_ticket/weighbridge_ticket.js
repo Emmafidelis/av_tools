@@ -71,6 +71,11 @@ const parse_valpoids = (xmlText) => {
 };
 
 const read_weight_client = (frm, target_field, time_field) => {
+  const items = frm.doc.items || [];
+  if (!items.length) {
+    frappe.msgprint(__("Please add at least one item before reading weight."));
+    return;
+  }
   ensure_gateway_payload(frm, () => {
     if (frm._read_weight_url) {
       fetch(frm._read_weight_url, { method: "GET", cache: "no-store" })
@@ -148,7 +153,25 @@ const read_weight_client = (frm, target_field, time_field) => {
   });
 };
 
+const toggle_read_buttons = (frm) => {
+  const hasItems = (frm.doc.items || []).length > 0;
+  frm.set_df_property("read_tare", "read_only", !hasItems);
+  frm.set_df_property("read_gross", "read_only", !hasItems);
+};
+
 frappe.ui.form.on("Weighbridge Ticket", {
+  refresh(frm) {
+    toggle_read_buttons(frm);
+  },
+  items_add(frm) {
+    toggle_read_buttons(frm);
+  },
+  items_remove(frm) {
+    toggle_read_buttons(frm);
+  },
+  items_on_form_rendered(frm) {
+    toggle_read_buttons(frm);
+  },
   read_tare(frm) {
     read_weight_client(frm, "tare_weight", "tare_time");
   },
