@@ -15,6 +15,7 @@
   "column_break_tmkr",
   "company",
   "customer",
+  "supplier",
   "vehicle",
   "section_break_weights",
   "tare_weight",
@@ -68,16 +69,14 @@
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "Document Type",
-   "options": "Sales Invoice\nDelivery Note",
-   "reqd": 1
+   "options": "Sales Invoice\nDelivery Note\nSales Order\nPurchase Invoice\nPurchase Receipt"
   },
   {
    "fieldname": "document_reference",
    "fieldtype": "Dynamic Link",
    "in_list_view": 1,
    "label": "Document Reference",
-   "options": "document_type",
-   "reqd": 1
+   "options": "document_type"
   },
   {
    "fieldname": "customer",
@@ -85,7 +84,15 @@
    "in_list_view": 1,
    "label": "Customer",
    "options": "Customer",
-   "reqd": 1
+   "depends_on": "eval: ['Sales Invoice','Delivery Note','Sales Order'].includes(doc.document_type)"
+  },
+  {
+   "fieldname": "supplier",
+   "fieldtype": "Link",
+   "in_list_view": 1,
+   "label": "Supplier",
+   "options": "Supplier",
+   "depends_on": "eval: ['Purchase Invoice','Purchase Receipt'].includes(doc.document_type)"
   },
   {
    "fieldname": "company",
