@@ -27,6 +27,9 @@ const apply_ticket_items = (frm, ticket) => {
   items.forEach((row) => {
     const child = frm.add_child("items");
     child.item_code = row.item_code;
+    if (row.item_name) {
+      child.item_name = row.item_name;
+    }
     if (row.qty != null) {
       child.qty = row.qty;
     }

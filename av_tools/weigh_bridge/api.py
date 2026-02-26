@@ -70,6 +70,7 @@ def get_ticket_items(ticket, doctype=None):
     items = [
         {
             "item_code": row.item_code,
+            "item_name": row.item_name,
             "qty": row.qty,
             "uom": row.uom,
         }
