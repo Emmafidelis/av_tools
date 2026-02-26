@@ -84,6 +84,7 @@ app_license = "mit"
 
 # before_install = "av_tools.install.before_install"
 # after_install = "av_tools.install.after_install"
+after_migrate = "av_tools.weigh_bridge.custom_fields.setup_custom_fields"
 
 # Uninstallation
 # ------------
@@ -246,4 +247,3 @@ override_doctype_class = {
 # default_log_clearing_doctypes = {
 # 	"Logging DocType Name": 30  # days to retain logs
 # }
-
