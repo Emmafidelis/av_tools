@@ -1,12 +1,32 @@
 // Copyright (c) 2026, Aakvatech and contributors
 // For license information, please see license.txt
 
+const DEFAULT_UOM = "Kg";
+
+const distribute_net_weight = (frm, netWeight) => {
+  const items = frm.doc.items || [];
+  if (!items.length) {
+    return;
+  }
+
+  const totalQty = items.reduce((sum, row) => sum + flt(row.qty || 0), 0);
+  const useProportional = totalQty > 0;
+  const perItem = items.length ? flt(netWeight) / items.length : 0;
+
+  items.forEach((row) => {
+    const qty = useProportional
+      ? (flt(row.qty || 0) / totalQty) * flt(netWeight)
+      : perItem;
+    frappe.model.set_value(row.doctype, row.name, "qty", qty);
+    frappe.model.set_value(row.doctype, row.name, "uom", DEFAULT_UOM);
+  });
+};
+
 const set_net_weight = (frm) => {
   if (frm.doc.tare_weight != null && frm.doc.gross_weight != null) {
-    frm.set_value(
-      "net_weight",
-      flt(frm.doc.gross_weight) - flt(frm.doc.tare_weight)
-    );
+    const net = flt(frm.doc.gross_weight) - flt(frm.doc.tare_weight);
+    frm.set_value("net_weight", net);
+    distribute_net_weight(frm, net);
   }
 };
 
