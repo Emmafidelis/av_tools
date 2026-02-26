@@ -44,6 +44,13 @@ app_license = "mit"
 
 # include js in doctype views
 # doctype_js = {"doctype" : "public/js/doctype.js"}
+doctype_js = {
+	"Sales Invoice": "weigh_bridge/doctype/sales_invoice_weighbridge_ticket.js",
+	"Delivery Note": "weigh_bridge/doctype/delivery_note_weighbridge_ticket.js",
+	"Sales Order": "weigh_bridge/doctype/sales_order_weighbridge_ticket.js",
+	"Purchase Invoice": "weigh_bridge/doctype/purchase_invoice_weighbridge_ticket.js",
+	"Purchase Receipt": "weigh_bridge/doctype/purchase_receipt_weighbridge_ticket.js",
+}
 # doctype_list_js = {"doctype" : "public/js/doctype_list.js"}
 # doctype_tree_js = {"doctype" : "public/js/doctype_tree.js"}
 # doctype_calendar_js = {"doctype" : "public/js/doctype_calendar.js"}
