@@ -6,8 +6,10 @@ def _get_settings():
     settings = frappe.get_single("Weighbridge Settings")
     if not settings.enabled:
         frappe.throw("Weighbridge Settings is disabled.")
-    if not settings.gateway_url:
-        frappe.throw("Gateway URL is required in Weighbridge Settings.")
+    if not settings.gateway_url and not settings.read_weight_url:
+        frappe.throw(
+            "Gateway URL or Read Weight URL is required in Weighbridge Settings."
+        )
     return settings
 
 
