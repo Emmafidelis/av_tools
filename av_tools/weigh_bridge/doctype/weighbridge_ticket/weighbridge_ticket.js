@@ -31,7 +31,7 @@ const set_net_weight = (frm) => {
 };
 
 const ensure_gateway_payload = (frm, callback) => {
-  if (frm._gateway_url && frm._gateway_payload) {
+  if (frm._read_weight_url) {
     callback();
     return;
   }
@@ -43,10 +43,7 @@ const ensure_gateway_payload = (frm, callback) => {
         frappe.msgprint(__("Weighbridge Settings are not configured."));
         return;
       }
-      frm._gateway_url = (r.message.gateway_url || "").replace(/\/+$/, "");
-      frm._gateway_payload = r.message.payload || {};
-      frm._read_weight_url =
-        (r.message.payload || {}).read_url || r.message.read_weight_url || "";
+      frm._read_weight_url = (r.message.read_weight_url || "").replace(/\/+$/, "");
       callback();
     },
   });
@@ -78,45 +75,12 @@ const read_weight_client = (frm, target_field, time_field) => {
   }
 
   ensure_gateway_payload(frm, () => {
-    if (frm._read_weight_url) {
-      fetch(frm._read_weight_url, { method: "GET", cache: "no-store" })
-        .then((response) =>
-          response.text().then((text) => ({
-            ok: response.ok,
-            status: response.status,
-            text,
-          }))
-        )
-        .then((result) => {
-          if (!result.ok) {
-            frappe.msgprint(result.text || `HTTP ${result.status}`);
-            return;
-          }
-          const data = parse_valpoids(result.text || "");
-          frm.set_value(target_field, data.weight);
-          frm.set_value(time_field, frappe.datetime.now_datetime());
-          set_net_weight(frm);
-        })
-        .catch((error) => {
-          frappe.msgprint(error.message);
-          // eslint-disable-next-line no-console
-          console.error(error);
-        });
+    if (!frm._read_weight_url) {
+      frappe.msgprint(__("Read Weight URL is not configured."));
       return;
     }
 
-    if (!frm._gateway_url) {
-      frappe.msgprint(__("Read Weight URL or Gateway URL is not configured."));
-      return;
-    }
-
-    const url = `${frm._gateway_url}/read_weight`;
-
-    fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(frm._gateway_payload || {}),
-    })
+    fetch(frm._read_weight_url, { method: "GET", cache: "no-store" })
       .then((response) =>
         response.text().then((text) => ({
           ok: response.ok,
@@ -130,18 +94,18 @@ const read_weight_client = (frm, target_field, time_field) => {
           return;
         }
 
-        let data = {};
+        let data;
         try {
           data = JSON.parse(result.text || "{}");
         } catch (err) {
-          frappe.msgprint(result.text || "Invalid JSON response.");
-          return;
+          data = parse_valpoids(result.text || "");
         }
 
         if (data.weight == null) {
           frappe.msgprint(result.text || "Missing weight in response.");
           return;
         }
+
         frm.set_value(target_field, data.weight);
         frm.set_value(time_field, frappe.datetime.now_datetime());
         set_net_weight(frm);
