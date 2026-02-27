@@ -1,4 +1,15 @@
 import frappe
+from frappe.utils import flt
+
+
+ALLOWED_REFERENCE_DOCTYPES = {
+    "Sales Invoice",
+    "Delivery Note",
+    "Sales Order",
+    "Purchase Order",
+    "Purchase Invoice",
+    "Purchase Receipt",
+}
 
 
 def _get_settings():
@@ -25,6 +36,41 @@ def get_gateway_payload():
     return {
         "read_weight_url": settings.read_weight_url,
         "timeout_seconds": settings.timeout_seconds,
+    }
+
+
+@frappe.whitelist()
+def get_reference_items(document_type=None, document_reference=None):
+    if not document_type or not document_reference:
+        frappe.throw("Document Type and Document Reference are required.")
+
+    if document_type not in ALLOWED_REFERENCE_DOCTYPES:
+        frappe.throw(f"Unsupported reference doctype: {document_type}")
+
+    doc = frappe.get_doc(document_type, document_reference)
+    doc.check_permission("read")
+
+    if doc.meta.is_submittable and doc.docstatus != 1:
+        frappe.throw(f"{document_type} must be submitted.")
+
+    items = []
+    for row in (doc.get("items") or []):
+        if not row.item_code:
+            continue
+        items.append(
+            {
+                "item_code": row.item_code,
+                "item_name": row.get("item_name"),
+                "qty": flt(row.get("qty")),
+                "uom": row.get("uom"),
+            }
+        )
+
+    return {
+        "items": items,
+        "company": doc.get("company"),
+        "customer": doc.get("customer"),
+        "supplier": doc.get("supplier"),
     }
 
 

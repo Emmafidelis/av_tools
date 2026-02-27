@@ -46,6 +46,78 @@ const save_after_weight_capture = (frm) => {
   return Promise.resolve();
 };
 
+const set_document_reference_query = (frm) => {
+  frm.set_query("document_reference", () => ({
+    filters: {
+      docstatus: 1,
+    },
+  }));
+};
+
+const apply_reference_items = (frm, items) => {
+  frm.clear_table("items");
+  (items || []).forEach((row) => {
+    if (!row.item_code) {
+      return;
+    }
+    const child = frm.add_child("items");
+    child.item_code = row.item_code;
+    if (row.item_name) {
+      child.item_name = row.item_name;
+    }
+    if (row.qty != null) {
+      child.qty = flt(row.qty);
+    }
+    if (row.uom) {
+      child.uom = row.uom;
+    }
+  });
+  frm.refresh_field("items");
+  toggle_read_buttons(frm);
+};
+
+const apply_reference_party = (frm, referenceData) => {
+  const data = referenceData || {};
+  const isSalesDoc = ["Sales Invoice", "Delivery Note", "Sales Order"].includes(
+    frm.doc.document_type
+  );
+  const isPurchaseDoc = [
+    "Purchase Order",
+    "Purchase Invoice",
+    "Purchase Receipt",
+  ].includes(frm.doc.document_type);
+
+  const values = {
+    company: data.company || null,
+    customer: isSalesDoc ? data.customer || null : null,
+    supplier: isPurchaseDoc ? data.supplier || null : null,
+  };
+
+  return frm.set_value(values);
+};
+
+const load_reference_items = (frm) => {
+  if (!frm.doc.document_type || !frm.doc.document_reference) {
+    return;
+  }
+
+  frappe.call({
+    method: "av_tools.weigh_bridge.api.get_reference_items",
+    args: {
+      document_type: frm.doc.document_type,
+      document_reference: frm.doc.document_reference,
+    },
+    callback: (r) => {
+      if (!r.message) {
+        frappe.msgprint(__("Unable to load items from reference document."));
+        return;
+      }
+      apply_reference_party(frm, r.message);
+      apply_reference_items(frm, r.message.items || []);
+    },
+  });
+};
+
 const ensure_gateway_payload = (frm, callback) => {
   // Always refresh from settings in case URL was updated while form is open.
   frappe.call({
@@ -225,7 +297,21 @@ const toggle_read_buttons = (frm) => {
 
 frappe.ui.form.on("Weighbridge Ticket", {
   refresh(frm) {
+    set_document_reference_query(frm);
     toggle_read_buttons(frm);
+  },
+  document_type(frm) {
+    frm.set_value("document_reference", null);
+    apply_reference_party(frm, {});
+    apply_reference_items(frm, []);
+  },
+  document_reference(frm) {
+    if (!frm.doc.document_reference) {
+      apply_reference_party(frm, {});
+      apply_reference_items(frm, []);
+      return;
+    }
+    load_reference_items(frm);
   },
   items_add(frm) {
     toggle_read_buttons(frm);
