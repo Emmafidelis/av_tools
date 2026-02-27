@@ -32,18 +32,18 @@ const set_net_weight = (frm) => {
 
 const save_after_weight_capture = (frm) => {
   if (!frm.is_dirty() || frm._weight_save_in_progress) {
-    return;
+    return Promise.resolve();
   }
 
   frm._weight_save_in_progress = true;
   const save_result = frm.save();
   if (save_result && typeof save_result.finally === "function") {
-    save_result.finally(() => {
+    return save_result.finally(() => {
       frm._weight_save_in_progress = false;
     });
-    return;
   }
   frm._weight_save_in_progress = false;
+  return Promise.resolve();
 };
 
 const ensure_gateway_payload = (frm, callback) => {
@@ -189,19 +189,25 @@ const read_weight_client = (frm, target_field, time_field) => {
           return;
         }
 
-        frm.set_value(target_field, data.weight);
-        frm.set_value(time_field, frappe.datetime.now_datetime());
-        set_net_weight(frm);
-        const label =
-          target_field === "tare_weight" ? __("Tare Weight") : __("Gross Weight");
-        frappe.show_alert(
-          {
-            message: __("{0} captured: {1}", [label, format_number(data.weight)]),
-            indicator: "green",
-          },
-          5
-        );
-        save_after_weight_capture(frm);
+        Promise.resolve(frm.set_value(target_field, data.weight))
+          .then(() => frm.set_value(time_field, frappe.datetime.now_datetime()))
+          .then(() => {
+            set_net_weight(frm);
+            return save_after_weight_capture(frm);
+          })
+          .then(() => {
+            const label =
+              target_field === "tare_weight"
+                ? __("Tare Weight")
+                : __("Gross Weight");
+            frappe.show_alert(
+              {
+                message: __("{0} captured: {1}", [label, format_number(data.weight)]),
+                indicator: "green",
+              },
+              5
+            );
+          });
       })
       .catch((error) => {
         frappe.msgprint(error.message);
