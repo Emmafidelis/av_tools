@@ -176,6 +176,15 @@ const read_weight_client = (frm, target_field, time_field) => {
         frm.set_value(target_field, data.weight);
         frm.set_value(time_field, frappe.datetime.now_datetime());
         set_net_weight(frm);
+        const label =
+          target_field === "tare_weight" ? __("Tare Weight") : __("Gross Weight");
+        frappe.show_alert(
+          {
+            message: __("{0} captured: {1}", [label, format_number(data.weight)]),
+            indicator: "green",
+          },
+          5
+        );
       })
       .catch((error) => {
         frappe.msgprint(error.message);
