@@ -30,6 +30,22 @@ const set_net_weight = (frm) => {
   }
 };
 
+const save_after_weight_capture = (frm) => {
+  if (!frm.is_dirty() || frm._weight_save_in_progress) {
+    return;
+  }
+
+  frm._weight_save_in_progress = true;
+  const save_result = frm.save();
+  if (save_result && typeof save_result.finally === "function") {
+    save_result.finally(() => {
+      frm._weight_save_in_progress = false;
+    });
+    return;
+  }
+  frm._weight_save_in_progress = false;
+};
+
 const ensure_gateway_payload = (frm, callback) => {
   // Always refresh from settings in case URL was updated while form is open.
   frappe.call({
@@ -185,6 +201,7 @@ const read_weight_client = (frm, target_field, time_field) => {
           },
           5
         );
+        save_after_weight_capture(frm);
       })
       .catch((error) => {
         frappe.msgprint(error.message);
