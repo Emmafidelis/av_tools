@@ -1,3 +1,5 @@
+import re
+
 import frappe
 import requests
 
@@ -16,6 +18,31 @@ def _get_settings():
 @frappe.whitelist()
 def read_weight(mode=None):
     settings = _get_settings()
+    if settings.read_weight_url:
+        try:
+            response = requests.get(
+                settings.read_weight_url, timeout=settings.timeout_seconds or 5
+            )
+            response.raise_for_status()
+        except requests.RequestException as exc:
+            frappe.throw(f"Failed to read weight: {exc}")
+
+        match = re.search(r"<id>ValPoids</id><value>\\s*([^<]+)</value>", response.text)
+        if not match:
+            frappe.throw("ValPoids not found in response.")
+
+        raw_value = match.group(1).strip()
+        number_match = re.search(r"[-+]?\\d*\\.?\\d+", raw_value)
+        if not number_match:
+            frappe.throw("No numeric weight found in response.")
+
+        return {
+            "weight": float(number_match.group(0)),
+            "uom": settings.unit_of_measure,
+            "raw": raw_value,
+            "mode": mode,
+        }
+
     payload = {
         "device_ip": settings.device_ip,
         "device_port": settings.device_port,
