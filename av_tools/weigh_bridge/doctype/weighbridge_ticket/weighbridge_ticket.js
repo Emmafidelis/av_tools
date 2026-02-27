@@ -50,6 +50,7 @@ const set_document_reference_query = (frm) => {
   frm.set_query("document_reference", () => ({
     filters: {
       docstatus: 1,
+      weighbridge_ticket: ["in", ["", null]],
     },
   }));
 };
