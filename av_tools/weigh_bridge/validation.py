@@ -21,9 +21,6 @@ def validate_weighbridge_ticket(doc, method=None):
     if ticket.docstatus != 1:
         frappe.throw("Weighbridge Ticket must be submitted.")
 
-    if ticket.document_reference and ticket.document_reference != doc.name:
-        frappe.throw("Weighbridge Ticket belongs to another document.")
-
     ticket_qty_by_item = _get_qty_by_item(ticket.get("items"))
     doc_qty_by_item = _get_qty_by_item(doc.get("items"))
 
