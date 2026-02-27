@@ -64,18 +64,30 @@ const parse_valpoids = (xmlText) => {
 };
 
 const parse_weight_from_raw_text = (text) => {
+  const rawText = (text || "").trim();
+  if (!rawText) {
+    return null;
+  }
+
   let data;
   try {
-    data = JSON.parse(text || "{}");
+    data = JSON.parse(rawText);
   } catch (err) {
     data = null;
   }
 
   if (data) {
-    if (data.weight != null) {
+    const directWeight =
+      data.weight ??
+      data.Weight ??
+      data.value ??
+      data.Value ??
+      (data.data && data.data.weight);
+
+    if (directWeight != null) {
       return {
-        weight: flt(data.weight),
-        raw: data.raw || String(data.weight),
+        weight: flt(directWeight),
+        raw: data.raw || String(directWeight),
       };
     }
 
@@ -91,8 +103,15 @@ const parse_weight_from_raw_text = (text) => {
   }
 
   try {
-    return parse_valpoids(text || "");
+    return parse_valpoids(rawText);
   } catch (err) {
+    const m = rawText.match(/[-+]?\d*\.?\d+/);
+    if (m) {
+      return {
+        weight: flt(m[0]),
+        raw: rawText,
+      };
+    }
     return null;
   }
 };
@@ -115,6 +134,7 @@ const read_weight_client = (frm, target_field, time_field) => {
         response.text().then((text) => ({
           ok: response.ok,
           status: response.status,
+          contentType: response.headers.get("content-type"),
           text,
           url,
         }))
@@ -142,7 +162,14 @@ const read_weight_client = (frm, target_field, time_field) => {
         const data = parse_weight_from_raw_text(result.text || "");
 
         if (!data || data.weight == null) {
-          frappe.msgprint(result.text || "Missing weight in response.");
+          frappe.msgprint(
+            __(
+              "Missing weight in response from {0} (HTTP {1}).",
+              [result.url, result.status]
+            )
+          );
+          // eslint-disable-next-line no-console
+          console.error("Weighbridge raw response", result);
           return;
         }
 
