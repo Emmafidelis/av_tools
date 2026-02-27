@@ -2,6 +2,16 @@ import frappe
 from frappe.utils import flt
 
 
+def _get_qty_by_item(rows):
+    qty_by_item = {}
+    for row in (rows or []):
+        item_code = (row.get("item_code") or "").strip()
+        if not item_code:
+            continue
+        qty_by_item[item_code] = qty_by_item.get(item_code, 0) + flt(row.get("qty"))
+    return qty_by_item
+
+
 def validate_weighbridge_ticket(doc, method=None):
     ticket_name = doc.get("weighbridge_ticket")
     if not ticket_name:
@@ -11,23 +21,24 @@ def validate_weighbridge_ticket(doc, method=None):
     if ticket.docstatus != 1:
         frappe.throw("Weighbridge Ticket must be submitted.")
 
-    ticket_items = {row.item_code: row for row in ticket.items}
-    doc_items = [row for row in (doc.get("items") or []) if row.item_code]
+    if ticket.document_type and ticket.document_type != doc.doctype:
+        frappe.throw("Weighbridge Ticket document type does not match this document.")
 
-    extra_items = [row.item_code for row in doc_items if row.item_code not in ticket_items]
+    if ticket.document_reference and ticket.document_reference != doc.name:
+        frappe.throw("Weighbridge Ticket belongs to another document.")
+
+    ticket_qty_by_item = _get_qty_by_item(ticket.get("items"))
+    doc_qty_by_item = _get_qty_by_item(doc.get("items"))
+
+    extra_items = sorted([item for item in doc_qty_by_item if item not in ticket_qty_by_item])
     if extra_items:
-        frappe.throw(
-            "Items not in Weighbridge Ticket: {0}".format(", ".join(extra_items))
-        )
+        frappe.throw(f"Items not in Weighbridge Ticket: {', '.join(extra_items)}")
 
     over_limit = []
-    for row in doc_items:
-        ticket_qty = flt(ticket_items[row.item_code].qty or 0)
-        if flt(row.qty or 0) > ticket_qty:
-            over_limit.append(
-                "{0} ({1} > {2})".format(row.item_code, row.qty or 0, ticket_qty)
-            )
+    for item_code, qty in doc_qty_by_item.items():
+        ticket_qty = flt(ticket_qty_by_item.get(item_code))
+        if flt(qty) > ticket_qty:
+            over_limit.append(f"{item_code} ({flt(qty)} > {ticket_qty})")
+
     if over_limit:
-        frappe.throw(
-            "Qty exceeds Weighbridge Ticket: {0}".format(", ".join(over_limit))
-        )
+        frappe.throw(f"Qty exceeds Weighbridge Ticket: {', '.join(over_limit)}")

@@ -58,9 +58,7 @@ class WeighbridgeTicket(Document):
         extra_items = sorted([item for item in ticket_qty if item not in reference_qty])
         if extra_items:
             frappe.throw(
-                "Items not found in {0} {1}: {2}".format(
-                    self.document_type, self.document_reference, ", ".join(extra_items)
-                )
+                f"Items not found in {self.document_type} {self.document_reference}: {', '.join(extra_items)}"
             )
 
     def update_reference_document_quantities(self):
@@ -92,9 +90,7 @@ class WeighbridgeTicket(Document):
         missing_items = sorted([item_code for item_code in ticket_qty if item_code not in reference_codes])
         if missing_items:
             frappe.throw(
-                "Items not found in {0} {1}: {2}".format(
-                    self.document_type, self.document_reference, ", ".join(missing_items)
-                )
+                f"Items not found in {self.document_type} {self.document_reference}: {', '.join(missing_items)}"
             )
 
         for row in reference_items:
