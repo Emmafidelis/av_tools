@@ -30,28 +30,127 @@ const set_net_weight = (frm) => {
   }
 };
 
+const ensure_gateway_payload = (frm, callback) => {
+  if (frm._gateway_url && frm._gateway_payload) {
+    callback();
+    return;
+  }
+
+  frappe.call({
+    method: "av_tools.weigh_bridge.api.get_gateway_payload",
+    callback: (r) => {
+      if (!r.message) {
+        frappe.msgprint(__("Weighbridge Settings are not configured."));
+        return;
+      }
+      frm._gateway_url = (r.message.gateway_url || "").replace(/\/+$/, "");
+      frm._gateway_payload = r.message.payload || {};
+      frm._read_weight_url =
+        (r.message.payload || {}).read_url || r.message.read_weight_url || "";
+      callback();
+    },
+  });
+};
+
+const parse_valpoids = (xmlText) => {
+  const match = xmlText.match(
+    /<id>ValPoids<\/id><value>\s*([^<]+)<\/value>/i
+  );
+  if (!match) {
+    throw new Error("ValPoids not found in response.");
+  }
+  const rawValue = match[1].trim();
+  const numberMatch = rawValue.match(/[-+]?\d*\.?\d+/);
+  if (!numberMatch) {
+    throw new Error("No numeric weight found in response.");
+  }
+  return {
+    weight: flt(numberMatch[0]),
+    raw: rawValue,
+  };
+};
+
 const read_weight_client = (frm, target_field, time_field) => {
   const items = frm.doc.items || [];
   if (!items.length) {
     frappe.msgprint(__("Please add at least one item before reading weight."));
     return;
   }
-  frappe.call({
-    method: "av_tools.weigh_bridge.api.read_weight",
-    args: { mode: target_field },
-    callback: (r) => {
-      if (!r.message) {
-        frappe.msgprint(__("Failed to read weight."));
-        return;
-      }
-      if (r.message.weight == null) {
-        frappe.msgprint(__("Missing weight in response."));
-        return;
-      }
-      frm.set_value(target_field, r.message.weight);
-      frm.set_value(time_field, frappe.datetime.now_datetime());
-      set_net_weight(frm);
-    },
+
+  ensure_gateway_payload(frm, () => {
+    if (frm._read_weight_url) {
+      fetch(frm._read_weight_url, { method: "GET", cache: "no-store" })
+        .then((response) =>
+          response.text().then((text) => ({
+            ok: response.ok,
+            status: response.status,
+            text,
+          }))
+        )
+        .then((result) => {
+          if (!result.ok) {
+            frappe.msgprint(result.text || `HTTP ${result.status}`);
+            return;
+          }
+          const data = parse_valpoids(result.text || "");
+          frm.set_value(target_field, data.weight);
+          frm.set_value(time_field, frappe.datetime.now_datetime());
+          set_net_weight(frm);
+        })
+        .catch((error) => {
+          frappe.msgprint(error.message);
+          // eslint-disable-next-line no-console
+          console.error(error);
+        });
+      return;
+    }
+
+    if (!frm._gateway_url) {
+      frappe.msgprint(__("Read Weight URL or Gateway URL is not configured."));
+      return;
+    }
+
+    const url = `${frm._gateway_url}/read_weight`;
+
+    fetch(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(frm._gateway_payload || {}),
+    })
+      .then((response) =>
+        response.text().then((text) => ({
+          ok: response.ok,
+          status: response.status,
+          text,
+        }))
+      )
+      .then((result) => {
+        if (!result.ok) {
+          frappe.msgprint(result.text || `HTTP ${result.status}`);
+          return;
+        }
+
+        let data = {};
+        try {
+          data = JSON.parse(result.text || "{}");
+        } catch (err) {
+          frappe.msgprint(result.text || "Invalid JSON response.");
+          return;
+        }
+
+        if (data.weight == null) {
+          frappe.msgprint(result.text || "Missing weight in response.");
+          return;
+        }
+        frm.set_value(target_field, data.weight);
+        frm.set_value(time_field, frappe.datetime.now_datetime());
+        set_net_weight(frm);
+      })
+      .catch((error) => {
+        frappe.msgprint(error.message);
+        // eslint-disable-next-line no-console
+        console.error(error);
+      });
   });
 };
 

@@ -1,5 +1,3 @@
-import re
-
 import frappe
 import requests
 
@@ -8,41 +6,14 @@ def _get_settings():
     settings = frappe.get_single("Weighbridge Settings")
     if not settings.enabled:
         frappe.throw("Weighbridge Settings is disabled.")
-    if not settings.gateway_url and not settings.read_weight_url:
-        frappe.throw(
-            "Gateway URL or Read Weight URL is required in Weighbridge Settings."
-        )
+    if not settings.gateway_url:
+        frappe.throw("Gateway URL is required in Weighbridge Settings.")
     return settings
 
 
 @frappe.whitelist()
 def read_weight(mode=None):
     settings = _get_settings()
-    if settings.read_weight_url:
-        try:
-            response = requests.get(
-                settings.read_weight_url, timeout=settings.timeout_seconds or 5
-            )
-            response.raise_for_status()
-        except requests.RequestException as exc:
-            frappe.throw(f"Failed to read weight: {exc}")
-
-        match = re.search(r"<id>ValPoids</id><value>\\s*([^<]+)</value>", response.text)
-        if not match:
-            frappe.throw("ValPoids not found in response.")
-
-        raw_value = match.group(1).strip()
-        number_match = re.search(r"[-+]?\\d*\\.?\\d+", raw_value)
-        if not number_match:
-            frappe.throw("No numeric weight found in response.")
-
-        return {
-            "weight": float(number_match.group(0)),
-            "uom": settings.unit_of_measure,
-            "raw": raw_value,
-            "mode": mode,
-        }
-
     payload = {
         "device_ip": settings.device_ip,
         "device_port": settings.device_port,
