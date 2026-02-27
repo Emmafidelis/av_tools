@@ -21,9 +21,6 @@ def validate_weighbridge_ticket(doc, method=None):
     if ticket.docstatus != 1:
         frappe.throw("Weighbridge Ticket must be submitted.")
 
-    if ticket.document_type and ticket.document_type != doc.doctype:
-        frappe.throw("Weighbridge Ticket document type does not match this document.")
-
     if ticket.document_reference and ticket.document_reference != doc.name:
         frappe.throw("Weighbridge Ticket belongs to another document.")
 
