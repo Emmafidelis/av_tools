@@ -50,8 +50,8 @@ def get_reference_items(document_type=None, document_reference=None):
     doc = frappe.get_doc(document_type, document_reference)
     doc.check_permission("read")
 
-    if doc.meta.is_submittable and doc.docstatus != 1:
-        frappe.throw(f"{document_type} must be submitted.")
+    if doc.meta.is_submittable and doc.docstatus != 0:
+        frappe.throw(f"{document_type} must be in Draft.")
 
     items = []
     for row in (doc.get("items") or []):

@@ -43,8 +43,8 @@ class WeighbridgeTicket(Document):
 
         reference_doc = frappe.get_doc(self.document_type, self.document_reference)
 
-        if reference_doc.meta.is_submittable and reference_doc.docstatus != 1:
-            frappe.throw(f"{self.document_type} must be submitted.")
+        if reference_doc.meta.is_submittable and reference_doc.docstatus != 0:
+            frappe.throw(f"{self.document_type} must be in Draft.")
 
         reference_qty = _build_qty_map(reference_doc.get("items"))
         ticket_qty = _build_qty_map(self.get("items"))
@@ -54,20 +54,5 @@ class WeighbridgeTicket(Document):
             frappe.throw(
                 "Items not found in {0} {1}: {2}".format(
                     self.document_type, self.document_reference, ", ".join(extra_items)
-                )
-            )
-
-        qty_over = []
-        for item_code, qty in ticket_qty.items():
-            allowed_qty = flt(reference_qty.get(item_code))
-            if flt(qty) > allowed_qty:
-                qty_over.append(
-                    "{0} ({1} > {2})".format(item_code, flt(qty), flt(allowed_qty))
-                )
-
-        if qty_over:
-            frappe.throw(
-                "Ticket qty exceeds {0} {1}: {2}".format(
-                    self.document_type, self.document_reference, ", ".join(qty_over)
                 )
             )
