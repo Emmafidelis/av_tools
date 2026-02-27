@@ -40,6 +40,15 @@ def setup_custom_fields():
                 "insert_after": "supplier",
             }
         ],
+        "Purchase Order": [
+            {
+                "fieldname": "weighbridge_ticket",
+                "label": "Weighbridge Ticket",
+                "fieldtype": "Link",
+                "options": "Weighbridge Ticket",
+                "insert_after": "supplier",
+            }
+        ],
         "Purchase Receipt": [
             {
                 "fieldname": "weighbridge_ticket",

@@ -73,7 +73,7 @@
    "fieldtype": "Select",
    "in_list_view": 1,
    "label": "Document Type",
-   "options": "Sales Invoice\nDelivery Note\nSales Order\nPurchase Invoice\nPurchase Receipt"
+   "options": "Sales Invoice\nDelivery Note\nSales Order\nPurchase Order\nPurchase Invoice\nPurchase Receipt"
   },
   {
    "fieldname": "document_reference",
@@ -96,7 +96,7 @@
    "in_list_view": 1,
    "label": "Supplier",
    "options": "Supplier",
-   "depends_on": "eval: ['Purchase Invoice','Purchase Receipt'].includes(doc.document_type)"
+   "depends_on": "eval: ['Purchase Order','Purchase Invoice','Purchase Receipt'].includes(doc.document_type)"
   },
   {
    "fieldname": "company",
