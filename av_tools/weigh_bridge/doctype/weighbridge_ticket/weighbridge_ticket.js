@@ -31,11 +31,7 @@ const set_net_weight = (frm) => {
 };
 
 const ensure_gateway_payload = (frm, callback) => {
-  if (frm._read_weight_url) {
-    callback();
-    return;
-  }
-
+  // Always refresh from settings in case URL was updated while form is open.
   frappe.call({
     method: "av_tools.weigh_bridge.api.get_gateway_payload",
     callback: (r) => {
@@ -67,6 +63,40 @@ const parse_valpoids = (xmlText) => {
   };
 };
 
+const parse_weight_from_raw_text = (text) => {
+  let data;
+  try {
+    data = JSON.parse(text || "{}");
+  } catch (err) {
+    data = null;
+  }
+
+  if (data) {
+    if (data.weight != null) {
+      return {
+        weight: flt(data.weight),
+        raw: data.raw || String(data.weight),
+      };
+    }
+
+    if (typeof data.raw === "string") {
+      const m = data.raw.match(/[-+]?\d*\.?\d+/);
+      if (m) {
+        return {
+          weight: flt(m[0]),
+          raw: data.raw,
+        };
+      }
+    }
+  }
+
+  try {
+    return parse_valpoids(text || "");
+  } catch (err) {
+    return null;
+  }
+};
+
 const read_weight_client = (frm, target_field, time_field) => {
   const items = frm.doc.items || [];
   if (!items.length) {
@@ -80,13 +110,28 @@ const read_weight_client = (frm, target_field, time_field) => {
       return;
     }
 
-    fetch(frm._read_weight_url, { method: "GET", cache: "no-store" })
-      .then((response) =>
+    const call_url = (url) =>
+      fetch(url, { method: "GET", cache: "no-store" }).then((response) =>
         response.text().then((text) => ({
           ok: response.ok,
           status: response.status,
           text,
+          url,
         }))
+      );
+
+    call_url(frm._read_weight_url)
+      .then((response) =>
+        !response.ok
+          ? response
+          : (() => {
+              const parsed = parse_weight_from_raw_text(response.text || "");
+              if (parsed || /\/read_weight$/i.test(response.url)) {
+                return response;
+              }
+              const retry_url = `${response.url.replace(/\/+$/, "")}/read_weight`;
+              return call_url(retry_url);
+            })()
       )
       .then((result) => {
         if (!result.ok) {
@@ -94,14 +139,9 @@ const read_weight_client = (frm, target_field, time_field) => {
           return;
         }
 
-        let data;
-        try {
-          data = JSON.parse(result.text || "{}");
-        } catch (err) {
-          data = parse_valpoids(result.text || "");
-        }
+        const data = parse_weight_from_raw_text(result.text || "");
 
-        if (data.weight == null) {
+        if (!data || data.weight == null) {
           frappe.msgprint(result.text || "Missing weight in response.");
           return;
         }
