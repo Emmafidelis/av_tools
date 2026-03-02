@@ -51,6 +51,7 @@ const handle_ticket_change = (frm) => {
     args: {
       ticket: frm.doc.weighbridge_ticket,
       doctype: frm.doctype,
+      document_name: frm.doc.name || "",
     },
     callback: (r) => {
       if (!r.message) {

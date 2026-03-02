@@ -75,7 +75,7 @@ def get_reference_items(document_type=None, document_reference=None):
 
 
 @frappe.whitelist()
-def get_ticket_items(ticket, doctype=None):
+def get_ticket_items(ticket, doctype=None, document_name=None):
     if not ticket:
         frappe.throw("Weighbridge Ticket is required.")
 
@@ -85,6 +85,17 @@ def get_ticket_items(ticket, doctype=None):
 
     if doctype and doc.document_type and doc.document_type != doctype:
         frappe.throw("Weighbridge Ticket document type does not match.")
+    if document_name and doc.document_reference and doc.document_reference != document_name:
+        frappe.throw("Weighbridge Ticket belongs to another document.")
+
+    if document_name:
+        frappe.db.set_value(
+            "Weighbridge Ticket",
+            doc.name,
+            {"document_reference": document_name},
+            update_modified=True,
+        )
+        doc.document_reference = document_name
 
     items = [
         {

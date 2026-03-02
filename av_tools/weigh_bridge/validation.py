@@ -28,11 +28,16 @@ def validate_weighbridge_ticket(doc, method=None):
     if extra_items:
         frappe.throw(f"Items not in Weighbridge Ticket: {', '.join(extra_items)}")
 
-    over_limit = []
-    for item_code, qty in doc_qty_by_item.items():
-        ticket_qty = flt(ticket_qty_by_item.get(item_code))
-        if flt(qty) > ticket_qty:
-            over_limit.append(f"{item_code} ({flt(qty)} > {ticket_qty})")
+    missing_items = sorted([item for item in ticket_qty_by_item if item not in doc_qty_by_item])
+    if missing_items:
+        frappe.throw(f"Items missing from document: {', '.join(missing_items)}")
 
-    if over_limit:
-        frappe.throw(f"Qty exceeds Weighbridge Ticket: {', '.join(over_limit)}")
+    qty_mismatch = []
+    for item_code, ticket_qty in ticket_qty_by_item.items():
+        doc_qty = flt(doc_qty_by_item.get(item_code))
+        ticket_qty = flt(ticket_qty)
+        if abs(doc_qty - ticket_qty) > 1e-9:
+            qty_mismatch.append(f"{item_code} ({doc_qty} != {ticket_qty})")
+
+    if qty_mismatch:
+        frappe.throw(f"Qty must match Weighbridge Ticket: {', '.join(qty_mismatch)}")
