@@ -6,6 +6,7 @@ const set_weighbridge_query = (frm) => {
   const query = () => {
     const filters = {
       document_type: "Delivery Note",
+      document_reference: ["in", ["", null]],
       docstatus: 1,
     };
 
