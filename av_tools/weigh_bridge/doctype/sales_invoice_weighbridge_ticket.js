@@ -45,13 +45,14 @@ const handle_ticket_change = (frm) => {
   if (!frm.doc.weighbridge_ticket) {
     return;
   }
+  const documentName = frm.is_new() ? "" : frm.doc.name || "";
 
   frappe.call({
     method: "av_tools.weigh_bridge.api.get_ticket_items",
     args: {
       ticket: frm.doc.weighbridge_ticket,
       doctype: frm.doctype,
-      document_name: frm.doc.name || "",
+      document_name: documentName,
     },
     callback: (r) => {
       if (!r.message) {

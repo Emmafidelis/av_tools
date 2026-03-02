@@ -88,7 +88,7 @@ def get_ticket_items(ticket, doctype=None, document_name=None):
     if document_name and doc.document_reference and doc.document_reference != document_name:
         frappe.throw("Weighbridge Ticket belongs to another document.")
 
-    if document_name:
+    if document_name and doctype and frappe.db.exists(doctype, document_name):
         frappe.db.set_value(
             "Weighbridge Ticket",
             doc.name,
