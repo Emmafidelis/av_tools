@@ -6,3 +6,4 @@
 # Patches added in this section will be executed after doctypes are migrated
 av_tools.patches.v1_0.migrate_generic_erp_behavior_overrides
 av_tools.patches.v1_0.migrate_generic_technical_admin_reports
+av_tools.patches.v1_0.migrate_report_extension_site_data
