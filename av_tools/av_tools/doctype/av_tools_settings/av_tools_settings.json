@@ -12,7 +12,9 @@
   "sales_invoice_qty_settings_section",
   "override_sales_invoice_qty",
   "platform_admin_settings_section",
-  "allow_delete_in_sql_command"
+  "allow_delete_in_sql_command",
+  "manufacturing_settings_section",
+  "is_manufacture"
  ],
  "fields": [
   {
@@ -73,6 +75,17 @@
    "fieldname": "allow_delete_in_sql_command",
    "fieldtype": "Check",
    "label": "Allow Delete in SQL Command"
+  },
+  {
+   "fieldname": "manufacturing_settings_section",
+   "fieldtype": "Section Break",
+   "label": "Manufacturing Settings"
+  },
+  {
+   "default": "0",
+   "fieldname": "is_manufacture",
+   "fieldtype": "Check",
+   "label": "Make Manufacture Entry instead of Material Receipt"
   }
  ],
  "index_web_pages_for_search": 1,
