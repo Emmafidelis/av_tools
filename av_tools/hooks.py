@@ -192,7 +192,11 @@ doc_events = {
 # ------------------------------
 #
 override_whitelisted_methods = {
-	"frappe.desk.query_report.get_script": "av_tools.av_tools_hooks.query_report.get_script"
+	"frappe.desk.query_report.get_script": "av_tools.av_tools_hooks.query_report.get_script",
+	"erpnext.buying.doctype.purchase_order.purchase_order.update_status": "av_tools.av_tools_hooks.generic_erp_behavior_overrides.update_purchase_order_status",
+	"erpnext.buying.doctype.purchase_order.purchase_order.close_or_unclose_purchase_orders": "av_tools.av_tools_hooks.generic_erp_behavior_overrides.close_or_unclose_purchase_orders",
+	"erpnext.stock.doctype.material_request.material_request.update_status": "av_tools.av_tools_hooks.generic_erp_behavior_overrides.update_material_request_status",
+	"erpnext.stock.get_item_details.get_item_details": "av_tools.av_tools_hooks.generic_erp_behavior_overrides.get_item_details",
 }
 
 # Override doctype class to intercept report execution
