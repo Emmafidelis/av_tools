@@ -10,7 +10,9 @@
   "allow_reopen_of_material_request_based_on_role",
   "role_to_reopen_material_request",
   "sales_invoice_qty_settings_section",
-  "override_sales_invoice_qty"
+  "override_sales_invoice_qty",
+  "platform_admin_settings_section",
+  "allow_delete_in_sql_command"
  ],
  "fields": [
   {
@@ -60,6 +62,17 @@
    "fieldname": "override_sales_invoice_qty",
    "fieldtype": "Check",
    "label": "Override Sales Invoice Qty"
+  },
+  {
+   "fieldname": "platform_admin_settings_section",
+   "fieldtype": "Section Break",
+   "label": "Platform and Admin Settings"
+  },
+  {
+   "default": "0",
+   "fieldname": "allow_delete_in_sql_command",
+   "fieldtype": "Check",
+   "label": "Allow Delete in SQL Command"
   }
  ],
  "index_web_pages_for_search": 1,

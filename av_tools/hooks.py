@@ -25,11 +25,11 @@ app_license = "mit"
 # ------------------
 
 # include js, css files in header of desk.html
-# app_include_css = "/assets/av_tools/css/av_tools.css"
+app_include_css = "/assets/av_tools/css/theme.css"
 # app_include_js = "/assets/av_tools/js/av_tools.js"
 
 # include js, css files in header of web template
-# web_include_css = "/assets/av_tools/css/av_tools.css"
+web_include_css = "/assets/av_tools/css/theme.css"
 # web_include_js = "/assets/av_tools/js/av_tools.js"
 
 # include custom scss in every website theme (without file extension ".scss")
@@ -160,28 +160,39 @@ doc_events = {
 	"Purchase Order": {"validate": "av_tools.weigh_bridge.validation.validate_weighbridge_ticket"},
 	"Purchase Invoice": {"validate": "av_tools.weigh_bridge.validation.validate_weighbridge_ticket"},
 	"Purchase Receipt": {"validate": "av_tools.weigh_bridge.validation.validate_weighbridge_ticket"},
+	"*": {
+		"validate": ["av_tools.av_tools.doctype.visibility.visibility.run_visibility"],
+		"onload": ["av_tools.av_tools.doctype.visibility.visibility.run_visibility"],
+		"before_insert": ["av_tools.av_tools.doctype.visibility.visibility.run_visibility"],
+		"after_insert": ["av_tools.av_tools.doctype.visibility.visibility.run_visibility"],
+		"before_naming": ["av_tools.av_tools.doctype.visibility.visibility.run_visibility"],
+		"before_change": ["av_tools.av_tools.doctype.visibility.visibility.run_visibility"],
+		"before_update_after_submit": [
+			"av_tools.av_tools.doctype.visibility.visibility.run_visibility"
+		],
+		"before_validate": ["av_tools.av_tools.doctype.visibility.visibility.run_visibility"],
+		"before_save": ["av_tools.av_tools.doctype.visibility.visibility.run_visibility"],
+		"on_update": ["av_tools.av_tools.doctype.visibility.visibility.run_visibility"],
+		"before_submit": ["av_tools.av_tools.doctype.visibility.visibility.run_visibility"],
+		"autoname": ["av_tools.av_tools.doctype.visibility.visibility.run_visibility"],
+		"on_cancel": ["av_tools.av_tools.doctype.visibility.visibility.run_visibility"],
+		"on_trash": ["av_tools.av_tools.doctype.visibility.visibility.run_visibility"],
+		"on_submit": ["av_tools.av_tools.doctype.visibility.visibility.run_visibility"],
+		"on_update_after_submit": [
+			"av_tools.av_tools.doctype.visibility.visibility.run_visibility"
+		],
+		"on_change": ["av_tools.av_tools.doctype.visibility.visibility.run_visibility"],
+	},
 }
 
 # Scheduled Tasks
 # ---------------
 
-# scheduler_events = {
-# 	"all": [
-# 		"av_tools.tasks.all"
-# 	],
-# 	"daily": [
-# 		"av_tools.tasks.daily"
-# 	],
-# 	"hourly": [
-# 		"av_tools.tasks.hourly"
-# 	],
-# 	"weekly": [
-# 		"av_tools.tasks.weekly"
-# 	],
-# 	"monthly": [
-# 		"av_tools.tasks.monthly"
-# 	],
-# }
+scheduler_events = {
+	"daily": [
+		"av_tools.av_tools.doctype.visibility.visibility.trigger_daily_alerts",
+	]
+}
 
 # Testing
 # -------
