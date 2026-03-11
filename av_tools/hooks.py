@@ -26,7 +26,7 @@ app_license = "mit"
 
 # include js, css files in header of desk.html
 app_include_css = "/assets/av_tools/css/theme.css"
-# app_include_js = "/assets/av_tools/js/av_tools.js"
+app_include_js = "/assets/av_tools/js/ai_assist.js"
 
 # include js, css files in header of web template
 web_include_css = "/assets/av_tools/css/theme.css"
@@ -92,7 +92,7 @@ doctype_js = {
 
 # before_install = "av_tools.install.before_install"
 # after_install = "av_tools.install.after_install"
-after_migrate = "av_tools.weigh_bridge.custom_fields.setup_custom_fields"
+after_migrate = "av_tools.after_migrate.run_after_migrate"
 
 # Uninstallation
 # ------------

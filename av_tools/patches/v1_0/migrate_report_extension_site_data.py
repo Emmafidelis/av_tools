@@ -31,6 +31,9 @@ def upsert_report_extension(source_row):
 
 
 def execute():
+	if doctype_exists(TARGET_DOCTYPE):
+		frappe.db.set_value("DocType", TARGET_DOCTYPE, "module", "Av Tools", update_modified=False)
+
 	if not doctype_exists(SOURCE_DOCTYPE) or not doctype_exists(TARGET_DOCTYPE):
 		return
 
