@@ -27,6 +27,36 @@ const set_fields_if_present = (frm, values) => {
   });
 };
 
+const get_ticket_route_options = (frm) => {
+  const options = {
+    document_type: frm.doctype,
+    document_reference: frm.doc.name || undefined,
+    company: frm.doc.company || undefined,
+  };
+
+  if (PARTY_FIELD === "customer") {
+    options.customer = frm.doc.customer || undefined;
+  } else {
+    options.supplier = frm.doc.supplier || undefined;
+  }
+
+  return options;
+};
+
+const add_create_ticket_button = (frm) => {
+  if (frm.doc.docstatus !== 1 || frm.doc.weighbridge_ticket) {
+    return;
+  }
+
+  frm.add_custom_button(
+    __("Weighbridge Ticket"),
+    () => {
+      frappe.new_doc("Weighbridge Ticket", get_ticket_route_options(frm));
+    },
+    __("Create")
+  );
+};
+
 const apply_ticket_items = (frm, ticket) => {
   const items = ticket.items || [];
   if (!items.length) {
@@ -111,6 +141,7 @@ frappe.ui.form.on(TARGET_DOCTYPE, {
   },
   refresh(frm) {
     set_weighbridge_query(frm);
+    add_create_ticket_button(frm);
   },
   weighbridge_ticket(frm) {
     handle_ticket_change(frm);

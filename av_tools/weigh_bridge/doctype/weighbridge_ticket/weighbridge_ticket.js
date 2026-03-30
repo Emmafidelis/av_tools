@@ -167,6 +167,24 @@ const load_reference_items = (frm) => {
   });
 };
 
+const auto_load_reference_items = (frm) => {
+  if (!frm.is_new()) {
+    return;
+  }
+  if (frm._auto_reference_loaded) {
+    return;
+  }
+  if (!frm.doc.document_type || !frm.doc.document_reference) {
+    return;
+  }
+  if ((frm.doc.items || []).length) {
+    return;
+  }
+
+  frm._auto_reference_loaded = true;
+  load_reference_items(frm);
+};
+
 const ensure_gateway_payload = (frm, callback) => {
   // Always refresh from settings in case URL was updated while form is open.
   frappe.call({
@@ -349,18 +367,22 @@ frappe.ui.form.on("Weighbridge Ticket", {
     set_document_reference_query(frm);
     toggle_read_buttons(frm);
     add_create_buttons(frm);
+    auto_load_reference_items(frm);
   },
   document_type(frm) {
+    frm._auto_reference_loaded = false;
     frm.set_value("document_reference", null);
     apply_reference_party(frm, {});
     apply_reference_items(frm, []);
   },
   document_reference(frm) {
     if (!frm.doc.document_reference) {
+      frm._auto_reference_loaded = false;
       apply_reference_party(frm, {});
       apply_reference_items(frm, []);
       return;
     }
+    frm._auto_reference_loaded = true;
     load_reference_items(frm);
   },
   items_add(frm) {
