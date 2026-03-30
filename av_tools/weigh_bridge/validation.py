@@ -21,6 +21,16 @@ def validate_weighbridge_ticket(doc, method=None):
     if ticket.docstatus != 1:
         frappe.throw("Weighbridge Ticket must be submitted.")
 
+    if ticket.get("target_document_type") and ticket.target_document_type != doc.doctype:
+        frappe.throw("Weighbridge Ticket target document type does not match this document.")
+
+    if (
+        not doc.get("__islocal")
+        and ticket.get("target_document_reference")
+        and ticket.target_document_reference != doc.name
+    ):
+        frappe.throw("Weighbridge Ticket belongs to another document.")
+
     ticket_qty_by_item = _get_qty_by_item(ticket.get("items"))
     doc_qty_by_item = _get_qty_by_item(doc.get("items"))
 

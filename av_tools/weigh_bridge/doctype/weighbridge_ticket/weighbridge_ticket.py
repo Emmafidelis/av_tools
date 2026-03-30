@@ -49,8 +49,8 @@ class WeighbridgeTicket(Document):
 
         reference_doc = frappe.get_doc(self.document_type, self.document_reference)
 
-        if reference_doc.meta.is_submittable and reference_doc.docstatus != 0:
-            frappe.throw(f"{self.document_type} must be in Draft.")
+        if reference_doc.meta.is_submittable and reference_doc.docstatus == 2:
+            frappe.throw(f"{self.document_type} {self.document_reference} is Cancelled.")
 
         reference_qty = _build_qty_map(reference_doc.get("items"))
         ticket_qty = _build_qty_map(self.get("items"))
@@ -69,10 +69,8 @@ class WeighbridgeTicket(Document):
             frappe.throw(f"Unsupported document type: {self.document_type}")
 
         reference_doc = frappe.get_doc(self.document_type, self.document_reference)
-        reference_doc.check_permission("write")
-
-        if reference_doc.meta.is_submittable and reference_doc.docstatus != 0:
-            frappe.throw(f"{self.document_type} must be in Draft.")
+        if reference_doc.meta.is_submittable and reference_doc.docstatus == 2:
+            frappe.throw(f"{self.document_type} {self.document_reference} is Cancelled.")
 
         ticket_qty = {}
         for row in (self.get("items") or []):
@@ -93,26 +91,37 @@ class WeighbridgeTicket(Document):
                 f"Items not found in {self.document_type} {self.document_reference}: {', '.join(missing_items)}"
             )
 
-        for row in reference_items:
-            item_code = (row.get("item_code") or "").strip()
-            if item_code in ticket_qty:
-                row.qty = ticket_qty[item_code]
-
-        reference_doc.weighbridge_ticket = self.name
-
-        reference_doc.save()
-
-    def clear_reference_document_link(self):
-        if not self.document_type or not self.document_reference:
+        if reference_doc.meta.is_submittable and reference_doc.docstatus == 0:
+            reference_doc.check_permission("write")
+            for row in reference_items:
+                item_code = (row.get("item_code") or "").strip()
+                if item_code in ticket_qty:
+                    row.qty = ticket_qty[item_code]
+            reference_doc.weighbridge_ticket = self.name
+            reference_doc.save()
             return
 
-        linked_ticket = frappe.db.get_value(
-            self.document_type, self.document_reference, "weighbridge_ticket"
+        # Submitted source document (e.g. Sales Order): keep original qty, only link ticket.
+        frappe.db.set_value(
+            self.document_type,
+            self.document_reference,
+            {"weighbridge_ticket": self.name},
+            update_modified=True,
         )
+
+    def clear_reference_document_link(self):
+        self._clear_document_ticket_link(self.document_type, self.document_reference)
+        self._clear_document_ticket_link(self.target_document_type, self.target_document_reference)
+
+    def _clear_document_ticket_link(self, doctype, name):
+        if not doctype or not name:
+            return
+
+        linked_ticket = frappe.db.get_value(doctype, name, "weighbridge_ticket")
         if linked_ticket == self.name:
             frappe.db.set_value(
-                self.document_type,
-                self.document_reference,
+                doctype,
+                name,
                 "weighbridge_ticket",
                 None,
                 update_modified=False,

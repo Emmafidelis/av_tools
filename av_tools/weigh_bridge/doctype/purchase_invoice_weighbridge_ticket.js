@@ -8,8 +8,8 @@ const set_weighbridge_query = (frm) => {
 
   const query = () => ({
     filters: {
-      document_type: TARGET_DOCTYPE,
-      document_reference: ["in", ["", null]],
+      target_document_type: ["in", ["", null, TARGET_DOCTYPE]],
+      target_document_reference: ["in", ["", null]],
       docstatus: 1,
     },
   });
