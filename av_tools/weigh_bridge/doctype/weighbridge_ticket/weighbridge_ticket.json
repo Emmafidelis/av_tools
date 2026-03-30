@@ -6,17 +6,17 @@
  "engine": "InnoDB",
  "field_order": [
   "naming_series",
-  "status",
-  "posting_date",
-  "column_break_reference",
-  "document_type",
-  "document_reference",
-  "posting_time",
-  "column_break_tmkr",
   "company",
   "customer",
   "supplier",
+  "column_break_reference",
   "vehicle",
+  "posting_time",
+  "posting_date",
+  "column_break_tmkr",
+  "document_reference",
+  "document_type",
+  "status",
   "section_break_weights",
   "tare_weight",
   "tare_manual",
@@ -38,6 +38,7 @@
    "default": "WBT-.YYYY.-.#####",
    "fieldname": "naming_series",
    "fieldtype": "Select",
+   "hidden": 1,
    "label": "Naming Series",
    "options": "WBT-.YYYY.-.#####"
   },
@@ -51,17 +52,17 @@
    "read_only": 1
   },
   {
+   "default": "Today",
    "fieldname": "posting_date",
    "fieldtype": "Date",
    "label": "Posting Date",
-   "default": "Today",
    "read_only": 1
   },
   {
+   "default": "Now",
    "fieldname": "posting_time",
    "fieldtype": "Time",
    "label": "Posting Time",
-   "default": "Now",
    "read_only": 1
   },
   {
@@ -83,20 +84,20 @@
    "options": "document_type"
   },
   {
+   "depends_on": "eval: ['Sales Invoice','Delivery Note','Sales Order'].includes(doc.document_type)",
    "fieldname": "customer",
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Customer",
-   "options": "Customer",
-   "depends_on": "eval: ['Sales Invoice','Delivery Note','Sales Order'].includes(doc.document_type)"
+   "options": "Customer"
   },
   {
+   "depends_on": "eval: ['Purchase Order','Purchase Invoice','Purchase Receipt'].includes(doc.document_type)",
    "fieldname": "supplier",
    "fieldtype": "Link",
    "in_list_view": 1,
    "label": "Supplier",
-   "options": "Supplier",
-   "depends_on": "eval: ['Purchase Order','Purchase Invoice','Purchase Receipt'].includes(doc.document_type)"
+   "options": "Supplier"
   },
   {
    "fieldname": "company",
@@ -208,7 +209,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-02-09 18:00:36.944604",
+ "modified": "2026-03-30 08:57:23.482167",
  "modified_by": "Administrator",
  "module": "Weigh Bridge",
  "name": "Weighbridge Ticket",
