@@ -1,7 +1,7 @@
 {
  "actions": [],
  "autoname": "naming_series:",
- "creation": "2026-02-09 00:00:00",
+ "creation": "2026-03-30 09:49:26.942732",
  "doctype": "DocType",
  "engine": "InnoDB",
  "field_order": [
@@ -89,7 +89,7 @@
    "fieldname": "target_document_type",
    "fieldtype": "Select",
    "label": "Target Document Type",
-   "options": "Sales Invoice\nDelivery Note\nSales Order\nPurchase Order\nPurchase Invoice\nPurchase Receipt",
+   "options": "\nSales Invoice\nDelivery Note\nSales Order\nPurchase Order\nPurchase Invoice\nPurchase Receipt",
    "read_only": 1
   },
   {
@@ -225,7 +225,7 @@
  "index_web_pages_for_search": 1,
  "is_submittable": 1,
  "links": [],
- "modified": "2026-03-30 09:32:06.912575",
+ "modified": "2026-03-30 10:18:53.261120",
  "modified_by": "Administrator",
  "module": "Weigh Bridge",
  "name": "Weighbridge Ticket",

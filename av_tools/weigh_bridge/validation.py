@@ -21,15 +21,27 @@ def validate_weighbridge_ticket(doc, method=None):
     if ticket.docstatus != 1:
         frappe.throw("Weighbridge Ticket must be submitted.")
 
-    if ticket.get("target_document_type") and ticket.target_document_type != doc.doctype:
+    is_source_doc = (
+        ticket.get("document_type") == doc.doctype
+        and ticket.get("document_reference") == doc.name
+    )
+    is_target_doctype = ticket.get("target_document_type") == doc.doctype
+
+    if ticket.get("target_document_type") and not is_source_doc and not is_target_doctype:
         frappe.throw("Weighbridge Ticket target document type does not match this document.")
 
     if (
         not doc.get("__islocal")
+        and is_target_doctype
         and ticket.get("target_document_reference")
         and ticket.target_document_reference != doc.name
     ):
         frappe.throw("Weighbridge Ticket belongs to another document.")
+
+    # In source->ticket->target flows, source docs can keep their own qty/items.
+    # Exact item/qty enforcement applies on the target document.
+    if ticket.get("target_document_type") and is_source_doc and not is_target_doctype:
+        return
 
     ticket_qty_by_item = _get_qty_by_item(ticket.get("items"))
     doc_qty_by_item = _get_qty_by_item(doc.get("items"))

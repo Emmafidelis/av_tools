@@ -83,16 +83,34 @@ def get_ticket_items(ticket, doctype=None, document_name=None):
     if doc.docstatus != 1:
         frappe.throw("Weighbridge Ticket must be submitted.")
 
-    if doctype and doc.target_document_type and doc.target_document_type != doctype:
+    is_source_request = (
+        doctype
+        and document_name
+        and doc.document_type == doctype
+        and doc.document_reference == document_name
+    )
+
+    if (
+        doctype
+        and doc.target_document_type
+        and doc.target_document_type != doctype
+        and not is_source_request
+    ):
         frappe.throw("Weighbridge Ticket target document type does not match.")
     if (
         document_name
         and doc.target_document_reference
         and doc.target_document_reference != document_name
+        and not is_source_request
     ):
         frappe.throw("Weighbridge Ticket belongs to another document.")
 
-    if document_name and doctype and frappe.db.exists(doctype, document_name):
+    if (
+        document_name
+        and doctype
+        and frappe.db.exists(doctype, document_name)
+        and not is_source_request
+    ):
         frappe.db.set_value(
             "Weighbridge Ticket",
             doc.name,
