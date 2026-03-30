@@ -2,6 +2,16 @@
 // For license information, please see license.txt
 
 const DEFAULT_UOM = "Kg";
+const CREATE_TARGET_DOCTYPES = [
+  "Sales Invoice",
+  "Delivery Note",
+  "Sales Order",
+  "Purchase Order",
+  "Purchase Invoice",
+  "Purchase Receipt",
+];
+const SALES_DOCTYPES = ["Sales Invoice", "Delivery Note", "Sales Order"];
+const PURCHASE_DOCTYPES = ["Purchase Order", "Purchase Invoice", "Purchase Receipt"];
 
 const distribute_net_weight = (frm, netWeight) => {
   const items = frm.doc.items || [];
@@ -53,6 +63,44 @@ const set_document_reference_query = (frm) => {
       weighbridge_ticket: ["in", ["", null]],
     },
   }));
+};
+
+const get_create_route_options = (frm, targetDoctype) => {
+  const options = {
+    weighbridge_ticket: frm.doc.name,
+    company: frm.doc.company || undefined,
+    posting_date: frm.doc.posting_date || undefined,
+    transaction_date: frm.doc.posting_date || undefined,
+    due_date: frm.doc.posting_date || undefined,
+    set_posting_time: 1,
+    posting_time: frm.doc.posting_time || undefined,
+  };
+
+  if (SALES_DOCTYPES.includes(targetDoctype)) {
+    options.customer = frm.doc.customer || undefined;
+  }
+
+  if (PURCHASE_DOCTYPES.includes(targetDoctype)) {
+    options.supplier = frm.doc.supplier || undefined;
+  }
+
+  return options;
+};
+
+const add_create_buttons = (frm) => {
+  if (frm.doc.docstatus !== 1) {
+    return;
+  }
+
+  CREATE_TARGET_DOCTYPES.forEach((targetDoctype) => {
+    frm.add_custom_button(
+      __(targetDoctype),
+      () => {
+        frappe.new_doc(targetDoctype, get_create_route_options(frm, targetDoctype));
+      },
+      __("Create")
+    );
+  });
 };
 
 const apply_reference_items = (frm, items) => {
@@ -300,6 +348,7 @@ frappe.ui.form.on("Weighbridge Ticket", {
   refresh(frm) {
     set_document_reference_query(frm);
     toggle_read_buttons(frm);
+    add_create_buttons(frm);
   },
   document_type(frm) {
     frm.set_value("document_reference", null);
