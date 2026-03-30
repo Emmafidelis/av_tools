@@ -27,9 +27,6 @@ def validate_weighbridge_ticket(doc, method=None):
     )
     is_target_doctype = ticket.get("target_document_type") == doc.doctype
 
-    if ticket.get("target_document_type") and not is_source_doc and not is_target_doctype:
-        frappe.throw("Weighbridge Ticket target document type does not match this document.")
-
     if (
         not doc.get("__islocal")
         and is_target_doctype
