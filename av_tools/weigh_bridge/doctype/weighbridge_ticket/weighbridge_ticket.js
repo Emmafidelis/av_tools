@@ -10,6 +10,14 @@ const CREATE_TARGET_DOCTYPES = [
   "Purchase Invoice",
   "Purchase Receipt",
 ];
+const CREATE_TARGETS_BY_SOURCE = {
+  "Sales Order": ["Sales Invoice"],
+  "Delivery Note": ["Sales Invoice"],
+  "Purchase Order": ["Purchase Invoice"],
+  "Purchase Receipt": ["Purchase Invoice"],
+  "Sales Invoice": [],
+  "Purchase Invoice": [],
+};
 const SALES_DOCTYPES = ["Sales Invoice", "Delivery Note", "Sales Order"];
 const PURCHASE_DOCTYPES = ["Purchase Order", "Purchase Invoice", "Purchase Receipt"];
 
@@ -92,7 +100,14 @@ const add_create_buttons = (frm) => {
     return;
   }
 
-  CREATE_TARGET_DOCTYPES.forEach((targetDoctype) => {
+  if (frm.doc.target_document_reference) {
+    return;
+  }
+
+  const targets =
+    CREATE_TARGETS_BY_SOURCE[frm.doc.document_type] || CREATE_TARGET_DOCTYPES;
+
+  targets.forEach((targetDoctype) => {
     frm.add_custom_button(
       __(targetDoctype),
       () => {

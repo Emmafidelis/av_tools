@@ -11,6 +11,13 @@ ALLOWED_REFERENCE_DOCTYPES = {
     "Purchase Receipt",
 }
 
+ALLOWED_TARGETS_BY_SOURCE = {
+    "Sales Order": {"Sales Invoice"},
+    "Delivery Note": {"Sales Invoice"},
+    "Purchase Order": {"Purchase Invoice"},
+    "Purchase Receipt": {"Purchase Invoice"},
+}
+
 
 def _get_settings():
     settings = frappe.get_single("Weighbridge Settings")
@@ -90,6 +97,11 @@ def get_ticket_items(ticket, doctype=None, document_name=None):
         and doc.document_reference == document_name
     )
 
+    if doctype and doc.document_type == doctype and not is_source_request:
+        frappe.throw(
+            f"Cannot use Weighbridge Ticket {doc.name} from {doc.document_type} as target {doctype}."
+        )
+
     if (
         doctype
         and doc.target_document_type
@@ -111,6 +123,13 @@ def get_ticket_items(ticket, doctype=None, document_name=None):
         and frappe.db.exists(doctype, document_name)
         and not is_source_request
     ):
+        if doc.document_type:
+            allowed_targets = ALLOWED_TARGETS_BY_SOURCE.get(doc.document_type, set())
+            if doctype not in allowed_targets:
+                frappe.throw(
+                    f"Weighbridge source {doc.document_type} can only create: {', '.join(sorted(allowed_targets)) or 'None'}."
+                )
+
         frappe.db.set_value(
             "Weighbridge Ticket",
             doc.name,
