@@ -165,23 +165,13 @@ doc_events = {
 # Scheduled Tasks
 # ---------------
 
-# scheduler_events = {
-# 	"all": [
-# 		"av_tools.tasks.all"
-# 	],
-# 	"daily": [
-# 		"av_tools.tasks.daily"
-# 	],
-# 	"hourly": [
-# 		"av_tools.tasks.hourly"
-# 	],
-# 	"weekly": [
-# 		"av_tools.tasks.weekly"
-# 	],
-# 	"monthly": [
-# 		"av_tools.tasks.monthly"
-# 	],
-# }
+scheduler_events = {
+	"cron": {
+		"0 */6 * * *": [
+			"av_tools.av_tools.doctype.parking_bill.parking_bill.check_bills_all_vehicles",
+		]
+	}
+}
 
 # Testing
 # -------
